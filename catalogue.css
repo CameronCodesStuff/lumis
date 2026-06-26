@@ -261,3 +261,14 @@
   .cat-main { padding: 28px 16px 60px; }
   .cat-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
 }
+
+.cat-poster-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(201,168,76,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

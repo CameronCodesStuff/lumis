@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LUMIS — Cinema On Demand</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#080808" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LUMIS" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
+  <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,8 +29,7 @@
 
   <nav class="nav">
     <div class="nav-logo" onclick="scrollToTop()">
-      <span class="logo-reel">LUMIS</span>
-      <span class="logo-dot">●</span>
+      <img src="images/logo.png" alt="LUMIS" class="nav-logo-img" />
     </div>
     <ul class="nav-links">
       <li><a href="#" class="active" id="nav-home" onclick="navHome(event)">Home</a></li>
@@ -66,7 +72,7 @@
         <span class="dot">·</span>
         <span class="age-badge" id="hero-rating-badge">PG-13</span>
       </div>
-      <p class="hero-synopsis" id="hero-synopsis">After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more to reverse Thanos's actions and restore balance — whatever it takes.</p>
+      <p class="hero-synopsis" id="hero-synopsis">After the devastating events of Infinity War, the universe is in ruins. The Avengers assemble once more to reverse Thanos's actions and restore balance — whatever it takes.</p>
       <div class="hero-actions">
         <button class="btn-primary" id="hero-play-btn" onclick="playFeatured()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
@@ -90,7 +96,6 @@
         <h2 class="section-title" id="section-title">Now Showing</h2>
         <div class="section-line"></div>
       </div>
-
       <div class="genre-pills" id="genre-pills">
         <button class="genre-pill active" data-genre="" onclick="switchGenre(this, '', 'Trending')">Trending</button>
         <button class="genre-pill" data-genre="28" onclick="switchGenre(this, '28', 'Action')">Action</button>
@@ -100,22 +105,21 @@
         <button class="genre-pill" data-genre="16" onclick="switchGenre(this, '16', 'Animation')">Animation</button>
         <button class="genre-pill" data-genre="35" onclick="switchGenre(this, '35', 'Comedy')">Comedy</button>
       </div>
-
       <div class="movies-grid" id="movies-grid">
         <div class="grid-loading" id="grid-loading">
           <div class="loading-spinner"></div>
           <span>Loading titles…</span>
         </div>
       </div>
-
       <div class="no-results" id="no-results" style="display:none;">No movies found.</div>
-
       <button class="load-more-btn" id="load-more-btn" style="display:none;" onclick="loadMoreMovies()">Load More</button>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="footer-logo">LUMIS<span>●</span></div>
+    <div class="footer-logo-wrap">
+      <img src="images/logo.png" alt="LUMIS" class="footer-logo-img" />
+    </div>
     <p class="footer-copy">© 2024 LUMIS Cinema On Demand. All rights reserved.</p>
     <div class="footer-links">
       <a href="#">Privacy</a>
@@ -130,14 +134,14 @@
       <div class="modal-header" id="modal-header">
         <span class="modal-title" id="modal-title"></span>
         <div class="modal-controls">
-          <label class="proxy-toggle" id="proxy-toggle">
+          <label class="proxy-toggle">
             <input type="checkbox" id="proxy-checkbox" onchange="onProxyToggle()" />
             <span class="proxy-box"></span>
             <span class="proxy-label">Proxy</span>
           </label>
           <div id="server-btns" style="display:flex;gap:8px;"></div>
         </div>
-        <button class="modal-close" onclick="closeMovie()" aria-label="Close">✕</button>
+        <button class="modal-close" onclick="closeMovie()">✕</button>
       </div>
       <div class="modal-player">
         <iframe id="movie-frame" src="" allowfullscreen></iframe>
@@ -155,6 +159,11 @@
   </div>
   <div class="mylist-overlay" id="mylist-overlay" onclick="toggleMyListPanel()"></div>
 
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
 </body>
 </html>
