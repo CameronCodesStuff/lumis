@@ -22,7 +22,7 @@
   --font-caps:    'Bebas Neue', 'Arial Narrow', sans-serif;
 
   --ticker-h: 36px;
-  --nav-h:    90px;
+  --nav-h:    100px;
   --radius:   6px;
   --radius-lg:12px;
   --transition:0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1066,7 +1066,7 @@ body {
 }
 
 .nav-logo-img {
-  height: 80px;
+  height: 96px;
   width: auto;
   object-fit: contain;
   cursor: pointer;
@@ -1200,22 +1200,86 @@ body {
 }
 
 /* ============================================
-   VIEW TRANSITIONS
+   VIEW TRANSITIONS — CINEMATIC
    ============================================ */
 @view-transition { navigation: auto; }
 
+/* Default cross-fade with scale */
 ::view-transition-old(root) {
-  animation: lumis-fade-out 0.25s ease forwards;
+  animation: vt-out 0.38s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 ::view-transition-new(root) {
-  animation: lumis-fade-in 0.3s ease forwards;
+  animation: vt-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes lumis-fade-out {
-  from { opacity: 1; transform: scale(1); }
-  to   { opacity: 0; transform: scale(0.98); }
+@keyframes vt-out {
+  0%   { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }
+  100% { opacity: 0; transform: scale(0.96) translateY(-8px); filter: brightness(0.4); }
 }
-@keyframes lumis-fade-in {
-  from { opacity: 0; transform: scale(1.02); }
+
+@keyframes vt-in {
+  0%   { opacity: 0; transform: scale(1.04) translateY(12px); filter: brightness(0.3); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }
+}
+
+/* Named transition elements — nav logo gets its own smooth animation */
+.nav-logo-img {
+  view-transition-name: site-logo;
+}
+
+::view-transition-old(site-logo) {
+  animation: logo-out 0.35s ease forwards;
+}
+::view-transition-new(site-logo) {
+  animation: logo-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes logo-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0.4; transform: scale(0.92); }
+}
+
+@keyframes logo-in {
+  from { opacity: 0.4; transform: scale(0.92); }
   to   { opacity: 1; transform: scale(1); }
+}
+
+/* Gold flash overlay on transition */
+::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+
+/* Stagger the ticker bar */
+.ticker-bar {
+  view-transition-name: ticker;
+}
+
+::view-transition-old(ticker) {
+  animation: ticker-out 0.3s ease forwards;
+}
+::view-transition-new(ticker) {
+  animation: ticker-in 0.35s ease forwards;
+}
+
+@keyframes ticker-out {
+  from { opacity: 1; }
+  to   { opacity: 0.6; }
+}
+
+@keyframes ticker-in {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
+
+/* Fallback for browsers without View Transitions */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(site-logo),
+  ::view-transition-new(site-logo),
+  ::view-transition-old(ticker),
+  ::view-transition-new(ticker) {
+    animation: none;
+  }
 }

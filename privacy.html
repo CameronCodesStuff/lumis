@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="view-transition" content="same-origin" />
+  <title>Privacy Policy — LUMIS</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#080808" />
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    .policy-page { padding-top: calc(var(--ticker-h) + var(--nav-h)); min-height: 100vh; }
+    .policy-content { max-width: 720px; margin: 0 auto; padding: 52px 28px 100px; }
+    .policy-eyebrow { font-family: var(--font-caps); font-size: 12px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 14px; }
+    .policy-title { font-family: var(--font-display); font-size: clamp(36px, 5vw, 56px); font-weight: 900; color: var(--white); line-height: 1.05; margin-bottom: 10px; }
+    .policy-title em { font-style: italic; color: var(--gold-light); }
+    .policy-date { font-size: 13px; color: var(--grey); margin-bottom: 48px; }
+    .policy-section { margin-bottom: 40px; }
+    .policy-section h2 { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(201,168,76,0.15); }
+    .policy-section p { font-size: 15px; color: rgba(245,240,232,0.75); line-height: 1.8; margin-bottom: 12px; }
+    .policy-section ul { padding-left: 20px; margin-bottom: 12px; }
+    .policy-section ul li { font-size: 15px; color: rgba(245,240,232,0.75); line-height: 1.8; margin-bottom: 6px; }
+    .policy-back { display: inline-flex; align-items: center; gap: 8px; color: var(--grey); font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; margin-bottom: 32px; transition: color 0.2s; }
+    .policy-back:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+  <div class="ticker-bar">
+    <div class="ticker-inner">
+      <span class="ticker-label">LUMIS</span>
+      <div class="ticker-track"><span>★ PRIVACY POLICY &nbsp;·&nbsp; LUMIS &nbsp;·&nbsp; ★ PRIVACY POLICY &nbsp;·&nbsp; LUMIS &nbsp;·&nbsp; ★ PRIVACY POLICY &nbsp;·&nbsp; LUMIS &nbsp;·&nbsp;</span></div>
+    </div>
+  </div>
+
+  <nav class="nav scrolled">
+    <div class="nav-logo" onclick="window.location='index.html'">
+      <img src="images/logo.png" alt="LUMIS" class="nav-logo-img" />
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catalogue.html">Catalogue</a></li>
+      <li><a href="history.html">History</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="catalogue.html">Catalogue</a>
+    <a href="history.html">History</a>
+  </div>
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+
+  <div class="policy-page">
+    <div class="policy-content">
+      <a class="policy-back" href="index.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+        Back to Home
+      </a>
+      <div class="policy-eyebrow">Legal</div>
+      <h1 class="policy-title">Privacy <em>Policy</em></h1>
+      <p class="policy-date">Last updated: January 2024</p>
+
+      <div class="policy-section">
+        <h2>Overview</h2>
+        <p>LUMIS is a personal, non-commercial movie streaming index. We do not collect, store, or sell any personal data. This policy explains what happens with any data generated while you use the site.</p>
+      </div>
+
+      <div class="policy-section">
+        <h2>Data We Do Not Collect</h2>
+        <ul>
+          <li>We do not require any account, login, or sign-up</li>
+          <li>We do not collect your name, email address, or any personal identifiers</li>
+          <li>We do not use advertising or third-party tracking cookies</li>
+          <li>We do not use analytics services that identify individual users</li>
+          <li>We do not store any data on our own servers</li>
+        </ul>
+      </div>
+
+      <div class="policy-section">
+        <h2>Local Storage</h2>
+        <p>LUMIS uses your browser's <code style="background:var(--black-3);padding:2px 6px;border-radius:3px;font-size:13px;color:var(--gold)">localStorage</code> to save the following data entirely on your own device:</p>
+        <ul>
+          <li><strong>Watch History</strong> — titles you have watched and when</li>
+          <li><strong>My List</strong> — titles you have bookmarked</li>
+        </ul>
+        <p>This data never leaves your browser. You can clear it at any time from the History page or by clearing your browser's site data.</p>
+      </div>
+
+      <div class="policy-section">
+        <h2>Third-Party Services</h2>
+        <p>LUMIS fetches movie data and poster images from <a href="https://www.themoviedb.org" target="_blank" style="color:var(--gold)">The Movie Database (TMDB)</a>. When you visit LUMIS, your browser makes requests to TMDB's API and image CDN. TMDB's own privacy policy applies to those requests.</p>
+        <p>Streaming embeds are sourced from third-party servers. LUMIS does not control those services and is not responsible for their data practices.</p>
+      </div>
+
+      <div class="policy-section">
+        <h2>Contact</h2>
+        <p>LUMIS is a personal project by <a href="https://github.com/CameronCodesStuff" target="_blank" style="color:var(--gold)">CameronCodesStuff</a>. For any questions, open an issue on GitHub.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo-wrap"><img src="images/logo.png" alt="LUMIS" class="footer-logo-img" /></div>
+    <p class="footer-copy">© 2024 LUMIS Cinema On Demand. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="index.html">Home</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('open');
+      document.getElementById('mobile-menu-overlay').classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobile-menu').classList.remove('open');
+      document.getElementById('mobile-menu-overlay').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('open');
+    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
+</body>
+</html>
