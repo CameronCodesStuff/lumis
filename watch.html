@@ -471,7 +471,13 @@
       return `
         <div class="watch-player-section">
           <div class="watch-player-header">
-            <span class="watch-player-title">▶ PLAYING <span id="now-playing-label">${STATE.isTv ? `S${STATE.season} E${STATE.episode}` : STATE.title.toUpperCase()}</span></span>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+              <span class="watch-player-title">▶ PLAYING <span id="now-playing-label">${STATE.isTv ? `S${STATE.season} E${STATE.episode}` : STATE.title.toUpperCase()}</span></span>
+              <button class="share-btn" id="share-btn" onclick="shareTitle()" title="Copy share link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Share
+              </button>
+            </div>
             <div class="watch-controls">
               ${STATE.isTv ? `
               <button id="next-ep-btn" class="next-ep-btn" onclick="nextEpisode()" style="display:none">
@@ -489,7 +495,7 @@
             </div>
           </div>
           <div class="watch-player-wrap">
-            <iframe id="player-frame" src="${getUrl()}" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            <iframe id="player-frame" src="${getUrl()}" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
           </div>
         </div>
       `;
@@ -541,6 +547,7 @@
       document.querySelector('meta[name="description"]')?.setAttribute('content', data.overview?.slice(0,160) || `Watch ${title} on LUMIS.`);
 
       // Ticker
+      updateOgTags(title, data.overview, data.poster_path ? 'https://image.tmdb.org/t/p/w780' + data.poster_path : '');
       document.getElementById('ticker-text').innerHTML = `★ ${title.toUpperCase()} &nbsp;·&nbsp; LUMIS &nbsp;·&nbsp; ★ ${title.toUpperCase()} &nbsp;·&nbsp; LUMIS &nbsp;·&nbsp;`;
 
       // Save to history

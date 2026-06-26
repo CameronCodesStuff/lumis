@@ -79,11 +79,12 @@
   </div>
 
   <section class="hero" id="hero">
-    <div class="hero-backdrop">
-      <img src="" alt="Featured film backdrop" class="hero-bg" id="hero-bg" />
-      <div class="hero-scanlines"></div>
-      <div class="hero-gradient"></div>
-    </div>
+    <!-- Rotating backdrops -->
+    <div class="hero-slides" id="hero-slides"></div>
+    <div class="hero-scanlines"></div>
+    <div class="hero-gradient"></div>
+
+    <!-- Content (updated per slide) -->
     <div class="hero-content" id="hero-content">
       <div class="hero-eyebrow">
         <span class="tag-featured">FEATURED FILM</span>
@@ -97,9 +98,9 @@
         <span class="dot">·</span>
         <span id="hero-genre">Action / Sci-Fi</span>
         <span class="dot">·</span>
-        <span class="age-badge" id="hero-rating-badge">PG-13</span>
+        <span class="age-badge">PG-13</span>
       </div>
-      <p class="hero-synopsis" id="hero-synopsis">After the devastating events of Infinity War, the universe is in ruins. The Avengers assemble once more to reverse Thanos's actions and restore balance — whatever it takes.</p>
+      <p class="hero-synopsis" id="hero-synopsis">After the devastating events of Infinity War, the universe is in ruins. The Avengers assemble once more to restore balance — whatever it takes.</p>
       <div class="hero-actions">
         <button class="btn-primary" id="hero-play-btn" onclick="playFeatured()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
@@ -111,6 +112,10 @@
         </button>
       </div>
     </div>
+
+    <!-- Dot indicators -->
+    <div class="hero-dots" id="hero-dots"></div>
+
     <div class="hero-scroll-hint">
       <span>Scroll</span>
       <svg width="14" height="20" viewBox="0 0 14 20" fill="none"><rect x="1" y="1" width="12" height="18" rx="6" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="6" r="2" fill="currentColor" class="scroll-dot"/></svg>

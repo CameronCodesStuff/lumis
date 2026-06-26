@@ -22,29 +22,110 @@ window.addEventListener('scroll', () => {
   if (heroBg) heroBg.style.transform = `translateY(${window.scrollY * 0.25}px)`;
 }, { passive: true });
 
+// Featured movie TMDB IDs for rotating hero
+const HERO_IDS = [299534, 157336, 475557, 496243, 155];
+
+let HERO_SLIDES   = [];
+let HERO_CURRENT  = 0;
+let HERO_TIMER    = null;
+
 async function initHero() {
   try {
-    const res  = await fetch(`${TMDB_BASE}/movie/299534?api_key=${TMDB_KEY}&append_to_response=external_ids`);
-    const data = await res.json();
-    const backdropUrl = data.backdrop_path ? `${IMG_BASE}original${data.backdrop_path}` : '';
-    const posterUrl   = data.poster_path   ? `${IMG_BASE}w500${data.poster_path}`      : '';
-
-    document.getElementById('hero-bg').src         = backdropUrl;
-    document.getElementById('hero-rating').textContent = `★ ${data.vote_average?.toFixed(1) || '8.4'}`;
-    document.getElementById('hero-year').textContent    = (data.release_date || '2019').split('-')[0];
-    document.getElementById('hero-runtime').textContent = data.runtime ? `${Math.floor(data.runtime/60)}h ${data.runtime%60}m` : '3h 1m';
-    document.getElementById('hero-genre').textContent   = data.genres?.slice(0,2).map(g => g.name).join(' / ') || 'Action / Sci-Fi';
-    document.getElementById('hero-synopsis').textContent = data.overview || '';
-
-    FEATURED.tmdbId = data.id;
-    FEATURED.imdbId = data.external_ids?.imdb_id || '';
-    FEATURED.posterUrl = posterUrl;
-    FEATURED.backdropUrl = backdropUrl;
-
-    restoreWatchlistBtn();
+    const results = await Promise.all(
+      HERO_IDS.map(id =>
+        fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_KEY}&append_to_response=external_ids`)
+          .then(r => r.json())
+      )
+    );
+    HERO_SLIDES = results.filter(d => d.backdrop_path);
+    buildHeroSlides();
+    showHeroSlide(0);
+    startHeroRotation();
   } catch (e) {
-    document.getElementById('hero-bg').src = 'images/endgame.jpg';
+    // fallback — show single endgame card
+    HERO_SLIDES = [{ id: 299534, title: 'Avengers: Endgame', backdrop_path: null,
+      overview: 'After Thanos disintegrates half the universe, the Avengers must reunite to restore balance.',
+      vote_average: 8.4, release_date: '2019-04-26', runtime: 181,
+      genres: [{ name: 'Action' }, { name: 'Sci-Fi' }],
+      external_ids: { imdb_id: 'tt4154796' } }];
+    showHeroSlide(0);
   }
+}
+
+function buildHeroSlides() {
+  const container = document.getElementById('hero-slides');
+  const dots      = document.getElementById('hero-dots');
+  if (!container || !dots) return;
+
+  container.innerHTML = HERO_SLIDES.map((d, i) => {
+    const url = d.backdrop_path ? `${IMG_BASE}original${d.backdrop_path}` : 'images/endgame.jpg';
+    return `<div class="hero-slide${i===0?' active':''}" style="background-image:url('${url}')"></div>`;
+  }).join('');
+
+  dots.innerHTML = HERO_SLIDES.map((_, i) =>
+    `<button class="hero-dot${i===0?' active':''}" onclick="goHeroSlide(${i})" aria-label="Slide ${i+1}"></button>`
+  ).join('');
+}
+
+function showHeroSlide(idx) {
+  HERO_CURRENT = idx;
+  const d = HERO_SLIDES[idx];
+  if (!d) return;
+
+  // Crossfade slides
+  document.querySelectorAll('.hero-slide').forEach((el, i) => el.classList.toggle('active', i === idx));
+  document.querySelectorAll('.hero-dot').forEach((el, i) => el.classList.toggle('active', i === idx));
+
+  // Fade out content, swap, fade in
+  const content = document.getElementById('hero-content');
+  if (content) {
+    content.classList.add('hero-content-exit');
+    setTimeout(() => {
+      updateHeroContent(d);
+      content.classList.remove('hero-content-exit');
+      content.classList.add('hero-content-enter');
+      setTimeout(() => content.classList.remove('hero-content-enter'), 400);
+    }, 200);
+  } else {
+    updateHeroContent(d);
+  }
+
+  FEATURED.tmdbId     = d.id;
+  FEATURED.imdbId     = d.external_ids?.imdb_id || d.imdb_id || '';
+  FEATURED.title      = d.title || d.original_title;
+  FEATURED.posterUrl  = d.poster_path ? `${IMG_BASE}w500${d.poster_path}` : '';
+  restoreWatchlistBtn();
+}
+
+function updateHeroContent(d) {
+  const title   = d.title || d.original_title || '';
+  const words   = title.split(' ');
+  const first   = words.slice(0, -1).join(' ');
+  const last    = words[words.length - 1];
+  const titleHtml = first ? `${first}<br /><em>${last}</em>` : `<em>${last}</em>`;
+
+  const el = id => document.getElementById(id);
+  if (el('hero-title'))    el('hero-title').innerHTML   = titleHtml;
+  if (el('hero-rating'))   el('hero-rating').textContent = `★ ${d.vote_average?.toFixed(1) || 'N/A'}`;
+  if (el('hero-year'))     el('hero-year').textContent   = (d.release_date||'').split('-')[0] || '';
+  if (el('hero-runtime'))  el('hero-runtime').textContent = d.runtime ? `${Math.floor(d.runtime/60)}h ${d.runtime%60}m` : '';
+  if (el('hero-genre'))    el('hero-genre').textContent  = (d.genres||[]).slice(0,2).map(g=>g.name).join(' / ');
+  if (el('hero-synopsis')) el('hero-synopsis').textContent = d.overview || '';
+}
+
+function goHeroSlide(idx) {
+  if (idx === HERO_CURRENT) return;
+  clearInterval(HERO_TIMER);
+  showHeroSlide(idx);
+  startHeroRotation();
+}
+
+function startHeroRotation() {
+  clearInterval(HERO_TIMER);
+  HERO_TIMER = setInterval(() => {
+    const next = (HERO_CURRENT + 1) % HERO_SLIDES.length;
+    showHeroSlide(next);
+  }, 8000);
 }
 
 async function loadMovies(reset = true) {
@@ -114,7 +195,7 @@ function createCard(item) {
   article.dataset.title = title;
   article.dataset.year  = year;
   article.dataset.tmdb  = tmdbId;
-  article.onclick = () => openMovieByTmdb(tmdbId, title);
+  article.onclick = () => { window.location = `watch.html?tmdb=${tmdbId}`; };
 
   article.innerHTML = `
     <div class="card-poster">
@@ -225,11 +306,10 @@ document.addEventListener('keydown', e => {
 });
 
 function playFeatured() {
-  showPlayerModal(FEATURED.title);
   if (FEATURED.tmdbId) {
-    loadMovieIframe(FEATURED.imdbId, FEATURED.tmdbId);
+    window.location = `watch.html?tmdb=${FEATURED.tmdbId}`;
   } else {
-    document.getElementById('movie-frame').src = 'movies/movie.html';
+    window.location = `watch.html?tmdb=299534`;
   }
 }
 
