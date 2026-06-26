@@ -16,6 +16,7 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#080808" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="LUMIS" />
   <link rel="apple-touch-icon" href="images/logo.png" />
@@ -390,6 +391,31 @@
       frame.src = '';
       setTimeout(() => { frame.src = getUrl(); }, 80);
       saveProgress();
+    }
+
+    function updateOgTags(title, description, posterUrl) {
+      const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+      const shareUrl = `https://cameroncodesstuff.github.io/lumis/watch.html?tmdb=${STATE.tmdb}${STATE.isTv ? '&tv=1' : ''}`;
+      set('meta[property="og:title"]',        `${title} — LUMIS`);
+      set('meta[property="og:description"]',  (description||'').slice(0, 200) || `Watch ${title} on LUMIS.`);
+      set('meta[property="og:image"]',        posterUrl || 'https://cameroncodesstuff.github.io/lumis/images/logo.png');
+      set('meta[property="og:url"]',          shareUrl);
+      set('meta[name="twitter:title"]',       `${title} — LUMIS`);
+      set('meta[name="twitter:description"]', (description||'').slice(0, 200) || `Watch ${title} on LUMIS.`);
+      set('meta[name="twitter:image"]',       posterUrl || 'https://cameroncodesstuff.github.io/lumis/images/logo.png');
+      set('meta[name="description"]',         (description||'').slice(0, 160) || `Watch ${title} on LUMIS.`);
+    }
+
+    function shareTitle() {
+      const url = `https://cameroncodesstuff.github.io/lumis/watch.html?tmdb=${STATE.tmdb}${STATE.isTv ? '&tv=1' : ''}`;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('share-btn');
+        if (!btn) return;
+        const orig = btn.innerHTML;
+        btn.textContent = '✓ Copied!';
+        btn.style.cssText += ';background:rgba(201,168,76,0.15);border-color:var(--gold);color:var(--gold)';
+        setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ''; }, 2000);
+      }).catch(() => prompt('Copy this link:', url));
     }
 
     // ── Server / proxy controls ────────────────────────────────────────────
