@@ -24,7 +24,7 @@ window.addEventListener('scroll', () => {
 
 async function initHero() {
   try {
-    const res  = await fetch(`${TMDB_BASE}/movie/299536?api_key=${TMDB_KEY}&append_to_response=external_ids`);
+    const res  = await fetch(`${TMDB_BASE}/movie/299534?api_key=${TMDB_KEY}&append_to_response=external_ids`);
     const data = await res.json();
     const backdropUrl = data.backdrop_path ? `${IMG_BASE}original${data.backdrop_path}` : '';
     const posterUrl   = data.poster_path   ? `${IMG_BASE}w500${data.poster_path}`      : '';
@@ -177,14 +177,8 @@ function loadMovieIframe(imdbId, tmdbId) {
 }
 
 function renderServerBtns() {
-  const header = document.getElementById('modal-header');
-  let btns = document.getElementById('server-btns');
-  if (!btns) {
-    btns = document.createElement('div');
-    btns.id = 'server-btns';
-    btns.style.cssText = 'display:flex;gap:8px;';
-    header.insertBefore(btns, header.lastElementChild);
-  }
+  const btns = document.getElementById('server-btns');
+  if (!btns) return;
   btns.innerHTML = SERVERS.map((s, i) =>
     `<button onclick="switchServer(${i})" style="font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid ${i===currentServer?'var(--gold)':'rgba(255,255,255,0.15)'};background:${i===currentServer?'rgba(201,168,76,0.15)':'none'};color:${i===currentServer?'var(--gold)':'var(--grey)'};cursor:pointer;font-family:inherit;transition:all .2s">${s.name}</button>`
   ).join('');

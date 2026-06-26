@@ -126,8 +126,9 @@
   <div class="modal" id="player-modal" aria-hidden="true">
     <div class="modal-backdrop" onclick="closeMovie()"></div>
     <div class="modal-container">
-      <div class="modal-header">
+      <div class="modal-header" id="modal-header">
         <span class="modal-title" id="modal-title"></span>
+        <div id="server-btns" style="display:flex;gap:8px;"></div>
         <button class="modal-close" onclick="closeMovie()" aria-label="Close">✕</button>
       </div>
       <div class="modal-player">
