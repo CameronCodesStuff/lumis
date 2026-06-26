@@ -117,7 +117,16 @@ function badgeFor(cat) {
 }
 
 function goWatch(item) {
-  window.location = `watch.html?tmdb=${item.tmdb}${item.isTv ? '&tv=1' : ''}`;
+  const params = new URLSearchParams({
+    tmdb:    item.tmdb,
+    title:   item.title,
+    year:    item.year,
+    rating:  item.rating,
+    runtime: item.runtime,
+    cat:     item.cat,
+  });
+  if (item.isTv) params.set('tv', '1');
+  window.location = `watch.html?${params.toString()}`;
 }
 
 function renderGrid() {

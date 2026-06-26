@@ -622,43 +622,61 @@
 
       loadProgress();
 
-      // Try movie first, then fall back to tv if not found
-      async function tryFetch(type) {
+      // Build a stub from URL params so we render INSTANTLY without waiting for TMDB
+      const stub = {
+        title:           params.get('title') || '',
+        name:            params.get('title') || '',
+        release_date:    params.get('year')  ? params.get('year') + '-01-01' : '',
+        first_air_date:  params.get('year')  ? params.get('year') + '-01-01' : '',
+        vote_average:    parseFloat(params.get('rating')) || null,
+        runtime:         null,
+        number_of_seasons: null,
+        genres:          [],
+        overview:        '',
+        poster_path:     null,
+        backdrop_path:   null,
+        imdb_id:         '',
+        external_ids:    {},
+        production_countries: [],
+        production_companies: [],
+        networks:        [],
+        origin_country:  [],
+        seasons:         [],
+        tagline:         '',
+        _stub:           true,
+      };
+
+      // If we have enough from URL params, render immediately
+      if (stub.title) {
+        renderPage(stub, !STATE.isTv);
+      }
+
+      // Then silently fetch real TMDB data and upgrade the page
+      const type = STATE.isTv ? 'tv' : 'movie';
+      try {
         const r = await fetch(`${TMDB_BASE}/${type}/${STATE.tmdb}?api_key=${TMDB_KEY}&append_to_response=external_ids`);
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const d = await r.json();
-        if (d.success === false || (!d.title && !d.name)) throw new Error('Not found');
-        return { d, type };
-      }
-
-      try {
-        let result;
-        if (STATE.isTv) {
-          result = await tryFetch('tv');
-        } else {
-          // Try movie, auto-fallback to tv
-          try {
-            result = await tryFetch('movie');
-          } catch {
-            result = await tryFetch('tv');
-            STATE.isTv = true;
-          }
-        }
-        STATE.imdb = result.d.external_ids?.imdb_id || result.d.imdb_id || '';
-        renderPage(result.d, result.type === 'movie');
+        if (d.success === false || (!d.title && !d.name)) throw new Error('Empty');
+        STATE.imdb = d.external_ids?.imdb_id || d.imdb_id || '';
+        // Full render with real data
+        renderPage(d, type === 'movie');
       } catch (err) {
-        console.error('watch.html init error:', err);
-        document.getElementById('watch-content').innerHTML = `
-          <a class="watch-back" href="catalogue.html">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
-            Back to Catalogue
-          </a>
-          <div style="padding:40px;text-align:center;color:var(--grey)">
-            <div style="font-size:48px;margin-bottom:16px">🎬</div>
-            <p style="font-size:16px;color:var(--white);margin-bottom:8px">Could not load this title</p>
-            <p style="font-size:13px;margin-bottom:24px">TMDB ID: ${STATE.tmdb} · Try a different server or check your connection.</p>
-            <a href="catalogue.html" style="color:var(--gold);font-weight:600;text-decoration:none">← Browse Catalogue</a>
-          </div>`;
+        // TMDB fetch failed — already showing stub if we had title, otherwise show error
+        if (!stub.title) {
+          document.getElementById('watch-content').innerHTML = `
+            <a class="watch-back" href="catalogue.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+              Back to Catalogue
+            </a>
+            <div style="padding:40px;text-align:center;color:var(--grey)">
+              <div style="font-size:48px;margin-bottom:16px">🎬</div>
+              <p style="font-size:16px;color:var(--white);margin-bottom:8px">Could not load this title</p>
+              <p style="font-size:13px;margin-bottom:24px">Check your connection and try again.</p>
+              <a href="catalogue.html" style="color:var(--gold);font-weight:600;text-decoration:none">← Browse Catalogue</a>
+            </div>`;
+        }
+        // Stub was already rendered — player still works since we have the TMDB ID
       }
     }
 
