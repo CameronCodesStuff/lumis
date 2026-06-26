@@ -45,17 +45,17 @@
 
   <div class="cat-hero">
     <h1 class="cat-hero-title">The <em>Full</em> Catalogue</h1>
-    <p class="cat-hero-sub">Browse every title — click any card to watch via LUMIS player.</p>
+    <p class="cat-hero-sub">Click any title to open the full watch page with season &amp; episode picker.</p>
     <div class="cat-search-wrap">
       <input type="text" id="cat-search" class="cat-search-input" placeholder="Search titles…" oninput="filterCatalogue()" />
     </div>
     <div class="cat-filter-pills">
-      <button class="cat-pill active" data-cat="all" onclick="setCat(this,'all')">All</button>
-      <button class="cat-pill" data-cat="hollywood" onclick="setCat(this,'hollywood')">Hollywood</button>
-      <button class="cat-pill" data-cat="bollywood" onclick="setCat(this,'bollywood')">Bollywood</button>
-      <button class="cat-pill" data-cat="series-hw" onclick="setCat(this,'series-hw')">Series — Hollywood</button>
-      <button class="cat-pill" data-cat="series-bw" onclick="setCat(this,'series-bw')">Series — Indian</button>
-      <button class="cat-pill" data-cat="anime" onclick="setCat(this,'anime')">Anime</button>
+      <button class="cat-pill active" data-cat="all"       onclick="setCat(this,'all')">All</button>
+      <button class="cat-pill" data-cat="hollywood"        onclick="setCat(this,'hollywood')">Hollywood</button>
+      <button class="cat-pill" data-cat="bollywood"        onclick="setCat(this,'bollywood')">Bollywood</button>
+      <button class="cat-pill" data-cat="series-hw"        onclick="setCat(this,'series-hw')">Series — Hollywood</button>
+      <button class="cat-pill" data-cat="series-bw"        onclick="setCat(this,'series-bw')">Series — Indian</button>
+      <button class="cat-pill" data-cat="anime"            onclick="setCat(this,'anime')">Anime</button>
     </div>
   </div>
 
@@ -63,27 +63,6 @@
     <div class="cat-grid" id="cat-grid"></div>
     <p class="cat-no-results" id="cat-no-results" style="display:none;">No titles found.</p>
   </main>
-
-  <div class="modal" id="player-modal" aria-hidden="true">
-    <div class="modal-backdrop" onclick="closeModal()"></div>
-    <div class="modal-container">
-      <div class="modal-header" id="modal-header">
-        <span class="modal-title" id="modal-title"></span>
-        <div class="modal-controls">
-          <label class="proxy-toggle">
-            <input type="checkbox" id="proxy-checkbox" onchange="onProxyToggle()" />
-            <span class="proxy-box"></span>
-            <span class="proxy-label">Proxy</span>
-          </label>
-          <div id="server-btns" style="display:flex;gap:8px;"></div>
-        </div>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-player">
-        <iframe id="movie-frame" src="" allowfullscreen></iframe>
-      </div>
-    </div>
-  </div>
 
   <div class="modal" id="trailer-modal" aria-hidden="true">
     <div class="modal-backdrop" onclick="closeTrailer()"></div>
@@ -110,11 +89,7 @@
     </div>
   </footer>
 
-  <script src="catalogue.js?v=2"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
+  <script src="catalogue.js?v=3"></script>
+  <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
 </body>
 </html>

@@ -47,7 +47,8 @@ body {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--ticker-h);
-  background: var(--gold);
+  background: var(--black);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -66,13 +67,13 @@ body {
   font-family: var(--font-caps);
   font-size: 13px;
   letter-spacing: 0.15em;
-  background: var(--black);
-  color: var(--gold);
+  background: var(--gold);
+  color: var(--black);
   padding: 0 18px;
   height: 100%;
   display: flex;
   align-items: center;
-  border-right: 2px solid rgba(0,0,0,0.3);
+  border-right: 2px solid rgba(0,0,0,0.4);
 }
 
 .ticker-track {
@@ -89,7 +90,7 @@ body {
   font-family: var(--font-caps);
   font-size: 13px;
   letter-spacing: 0.12em;
-  color: var(--black);
+  color: var(--gold);
   animation: ticker 22s linear infinite;
   padding-left: 100%;
 }
@@ -876,15 +877,40 @@ body {
 .mylist-overlay.open { opacity: 1; pointer-events: all; }
 
 @media (max-width: 768px) {
-  .nav { padding: 0 20px; }
+  :root { --nav-h: 56px; --ticker-h: 30px; }
+  .nav { padding: 0 16px; }
   .nav-links { display: none; }
-  .hero { padding-left: 24px; padding-bottom: 60px; }
-  .hero-title { font-size: 48px; }
-  .main { padding: 40px 20px 60px; }
-  .footer { padding: 28px 20px; flex-direction: column; text-align: center; }
-  .movies-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+  .nav-logo-img { height: 36px; }
+  .avatar { width: 30px; height: 30px; font-size: 12px; }
+  .hero { padding-left: 20px; padding-right: 20px; padding-bottom: 48px; min-height: 85vh; }
+  .hero-title { font-size: clamp(36px, 10vw, 52px); }
+  .hero-synopsis { font-size: 14px; max-width: 100%; }
+  .hero-actions { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .btn-primary { width: 100%; justify-content: center; padding: 13px 20px; }
+  .btn-secondary { width: 100%; justify-content: center; padding: 12px 20px; }
   .hero-scroll-hint { display: none; }
+  .main { padding: 28px 16px 60px; }
+  .section-title { font-size: 18px; }
+  .genre-pills { gap: 8px; }
+  .genre-pill { padding: 5px 14px; font-size: 12px; }
+  .movies-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .card-title { font-size: 13px; }
+  .card-info { padding: 10px 12px; }
+  .search-bar-wrap { padding: 12px 16px; }
+  .footer { padding: 24px 16px; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+  .modal-container { width: 96vw; }
+  .modal-header { padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+  .modal-title { font-size: 13px; }
+  .modal-controls { flex-wrap: wrap; gap: 6px; }
   .mylist-panel { width: 100%; }
+  .load-more-btn { padding: 12px 28px; }
+}
+
+@media (max-width: 480px) {
+  .movies-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .hero-title { font-size: clamp(30px, 9vw, 44px); }
+  .hero-meta { font-size: 11px; gap: 6px; flex-wrap: wrap; }
+  .tag-featured { font-size: 10px; padding: 3px 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

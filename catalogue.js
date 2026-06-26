@@ -1,14 +1,6 @@
-const PROXY_BASE = 'https://unblockedmovies.detlaffcameron.workers.dev/';
-const TMDB_KEY   = '232a7338c36748bff95e5de149a21b95';
-const TMDB_BASE  = 'https://api.themoviedb.org/3';
-const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
-
-const SERVERS = [
-  { name:'Server 1', movie:(im,tm)=>im?`https://autoembed.co/movie/imdb/${im}`:`https://autoembed.co/movie/tmdb/${tm}`, tv:(im,s,e,tm)=>im?`https://autoembed.co/tv/imdb/${im}-${s}-${e}`:`https://autoembed.co/tv/tmdb/${tm}-${s}-${e}` },
-  { name:'Server 2', movie:(im,tm)=>`https://vidlink.pro/movie/${tm}`,                                                   tv:(im,s,e,tm)=>`https://vidlink.pro/tv/${tm}/${s}/${e}` },
-  { name:'Server 3', movie:(im,tm)=>`https://vidsrc.net/embed/movie?tmdb=${tm}`,                                        tv:(im,s,e,tm)=>`https://vidsrc.net/embed/tv?tmdb=${tm}&season=${s}&episode=${e}` },
-  { name:'Server 4', movie:(im,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1`,                    tv:(im,s,e,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1&s=${s}&e=${e}` }
-];
+const TMDB_KEY  = '232a7338c36748bff95e5de149a21b95';
+const TMDB_BASE = 'https://api.themoviedb.org/3';
+const IMG_BASE  = 'https://image.tmdb.org/t/p/w342';
 
 const CATALOGUE = [
   { cat:'hollywood', title:'Inception',                          tmdb:'27205',  year:'2010', rating:'8.8', runtime:'2h 42m', trailer:'YoHD9XEInc0' },
@@ -45,41 +37,41 @@ const CATALOGUE = [
   { cat:'bollywood', title:'KGF: Chapter 1',                     tmdb:'529816', year:'2018', rating:'8.3', runtime:'2h 36m', trailer:'-KfsY-qwBS0' },
   { cat:'bollywood', title:'Dangal',                             tmdb:'368006', year:'2016', rating:'8.3', runtime:'2h 41m', trailer:'x_7YlGv9u1g' },
 
-  { cat:'series-hw', title:'Breaking Bad',                       tmdb:'1396',   year:'2008', rating:'9.5', runtime:'5 seasons', trailer:'HhesaQXLuRY', isTv:true },
-  { cat:'series-hw', title:'Game of Thrones',                    tmdb:'1399',   year:'2011', rating:'9.2', runtime:'8 seasons', trailer:'gcTkNV5Vg1E', isTv:true },
-  { cat:'series-hw', title:'Chernobyl',                          tmdb:'87108',  year:'2019', rating:'9.4', runtime:'5 eps',     trailer:'s9APLXM9Ei8', isTv:true },
-  { cat:'series-hw', title:'Stranger Things',                    tmdb:'66732',  year:'2016', rating:'8.7', runtime:'4 seasons', trailer:'b9EkMc79ZSU', isTv:true },
-  { cat:'series-hw', title:'Peaky Blinders',                     tmdb:'60574',  year:'2013', rating:'8.8', runtime:'6 seasons', trailer:'oVzVdvGIC7U', isTv:true },
-  { cat:'series-hw', title:'Ozark',                              tmdb:'69740',  year:'2017', rating:'8.4', runtime:'4 seasons', trailer:'5hAXVqrljbs', isTv:true },
-  { cat:'series-hw', title:'Sherlock',                           tmdb:'19885',  year:'2010', rating:'9.1', runtime:'4 seasons', trailer:'xK7S9mrFWL4', isTv:true },
-  { cat:'series-hw', title:'The Witcher',                        tmdb:'71912',  year:'2019', rating:'8.5', runtime:'3 seasons', trailer:'ndl1W4ltcmg', isTv:true },
-  { cat:'series-hw', title:'Money Heist',                        tmdb:'71446',  year:'2017', rating:'8.3', runtime:'5 seasons', trailer:'p_PJbmrX4uk', isTv:true },
-  { cat:'series-hw', title:'Lucifer',                            tmdb:'63174',  year:'2016', rating:'8.1', runtime:'6 seasons', trailer:'-0beFQnB5lY', isTv:true },
-  { cat:'series-hw', title:'The Crown',                          tmdb:'65494',  year:'2016', rating:'8.6', runtime:'6 seasons', trailer:'w1pIbUOc_lU', isTv:true },
-  { cat:'series-hw', title:'Black Mirror',                       tmdb:'42009',  year:'2011', rating:'8.8', runtime:'6 seasons', trailer:'V0XOApF5nLU', isTv:true },
-  { cat:'series-hw', title:'WandaVision',                        tmdb:'85271',  year:'2021', rating:'8.0', runtime:'1 season',  trailer:'sj9J2ecsSpo', isTv:true },
-  { cat:'series-hw', title:'Firefly',                            tmdb:'1437',   year:'2002', rating:'9.0', runtime:'1 season',  trailer:'oBZrZij2-g8', isTv:true },
+  { cat:'series-hw', title:'Breaking Bad',    tmdb:'1396',   year:'2008', rating:'9.5', runtime:'5 seasons', trailer:'HhesaQXLuRY', isTv:true },
+  { cat:'series-hw', title:'Game of Thrones', tmdb:'1399',   year:'2011', rating:'9.2', runtime:'8 seasons', trailer:'gcTkNV5Vg1E', isTv:true },
+  { cat:'series-hw', title:'Chernobyl',       tmdb:'87108',  year:'2019', rating:'9.4', runtime:'5 eps',     trailer:'s9APLXM9Ei8', isTv:true },
+  { cat:'series-hw', title:'Stranger Things', tmdb:'66732',  year:'2016', rating:'8.7', runtime:'4 seasons', trailer:'b9EkMc79ZSU', isTv:true },
+  { cat:'series-hw', title:'Peaky Blinders',  tmdb:'60574',  year:'2013', rating:'8.8', runtime:'6 seasons', trailer:'oVzVdvGIC7U', isTv:true },
+  { cat:'series-hw', title:'Ozark',           tmdb:'69740',  year:'2017', rating:'8.4', runtime:'4 seasons', trailer:'5hAXVqrljbs', isTv:true },
+  { cat:'series-hw', title:'Sherlock',        tmdb:'19885',  year:'2010', rating:'9.1', runtime:'4 seasons', trailer:'xK7S9mrFWL4', isTv:true },
+  { cat:'series-hw', title:'The Witcher',     tmdb:'71912',  year:'2019', rating:'8.5', runtime:'3 seasons', trailer:'ndl1W4ltcmg', isTv:true },
+  { cat:'series-hw', title:'Money Heist',     tmdb:'71446',  year:'2017', rating:'8.3', runtime:'5 seasons', trailer:'p_PJbmrX4uk', isTv:true },
+  { cat:'series-hw', title:'Lucifer',         tmdb:'63174',  year:'2016', rating:'8.1', runtime:'6 seasons', trailer:'-0beFQnB5lY', isTv:true },
+  { cat:'series-hw', title:'The Crown',       tmdb:'65494',  year:'2016', rating:'8.6', runtime:'6 seasons', trailer:'w1pIbUOc_lU', isTv:true },
+  { cat:'series-hw', title:'Black Mirror',    tmdb:'42009',  year:'2011', rating:'8.8', runtime:'6 seasons', trailer:'V0XOApF5nLU', isTv:true },
+  { cat:'series-hw', title:'WandaVision',     tmdb:'85271',  year:'2021', rating:'8.0', runtime:'1 season',  trailer:'sj9J2ecsSpo', isTv:true },
+  { cat:'series-hw', title:'Firefly',         tmdb:'1437',   year:'2002', rating:'9.0', runtime:'1 season',  trailer:'oBZrZij2-g8', isTv:true },
 
-  { cat:'series-bw', title:'Mirzapur',                           tmdb:'78264',  year:'2018', rating:'8.4', runtime:'3 seasons', trailer:'ZNeGF-PvRHY', isTv:true },
-  { cat:'series-bw', title:'Sacred Games',                       tmdb:'77055',  year:'2018', rating:'8.7', runtime:'2 seasons', trailer:'lM1xVnYsirw', isTv:true },
-  { cat:'series-bw', title:'Scam 1992',                          tmdb:'98879',  year:'2020', rating:'9.5', runtime:'1 season',  trailer:'ISORfez27og', isTv:true },
-  { cat:'series-bw', title:'Panchayat',                          tmdb:'99762',  year:'2020', rating:'8.7', runtime:'3 seasons', trailer:'mojZJ7oeD_g', isTv:true },
-  { cat:'series-bw', title:'Kota Factory',                       tmdb:'96676',  year:'2019', rating:'9.0', runtime:'2 seasons', trailer:'pNZQ6msbOvM', isTv:true },
-  { cat:'series-bw', title:'Paatal Lok',                         tmdb:'101135', year:'2020', rating:'7.8', runtime:'1 season',  trailer:'cNwWMW4mxO8', isTv:true },
-  { cat:'series-bw', title:'Asur',                               tmdb:'96552',  year:'2020', rating:'8.4', runtime:'2 seasons', trailer:'LDirQBvwx7g', isTv:true },
-  { cat:'series-bw', title:'Bandish Bandits',                    tmdb:'106135', year:'2020', rating:'8.7', runtime:'1 season',  trailer:'UhU57OgGp50', isTv:true },
-  { cat:'series-bw', title:'Mismatched',                         tmdb:'110316', year:'2020', rating:'8.4', runtime:'2 seasons', trailer:'uYmwNNkix-k', isTv:true },
-  { cat:'series-bw', title:'TVF Pitchers',                       tmdb:'64490',  year:'2015', rating:'9.1', runtime:'2 seasons', trailer:'84Jk1OqDqOo', isTv:true },
-  { cat:'series-bw', title:'Criminal Justice',                   tmdb:'93784',  year:'2019', rating:'8.1', runtime:'3 seasons', trailer:'KPyNH7mZkGc', isTv:true },
+  { cat:'series-bw', title:'Mirzapur',        tmdb:'78264',  year:'2018', rating:'8.4', runtime:'3 seasons', trailer:'ZNeGF-PvRHY', isTv:true },
+  { cat:'series-bw', title:'Sacred Games',    tmdb:'77055',  year:'2018', rating:'8.7', runtime:'2 seasons', trailer:'lM1xVnYsirw', isTv:true },
+  { cat:'series-bw', title:'Scam 1992',       tmdb:'98879',  year:'2020', rating:'9.5', runtime:'1 season',  trailer:'ISORfez27og', isTv:true },
+  { cat:'series-bw', title:'Panchayat',       tmdb:'99762',  year:'2020', rating:'8.7', runtime:'3 seasons', trailer:'mojZJ7oeD_g', isTv:true },
+  { cat:'series-bw', title:'Kota Factory',    tmdb:'96676',  year:'2019', rating:'9.0', runtime:'2 seasons', trailer:'pNZQ6msbOvM', isTv:true },
+  { cat:'series-bw', title:'Paatal Lok',      tmdb:'101135', year:'2020', rating:'7.8', runtime:'1 season',  trailer:'cNwWMW4mxO8', isTv:true },
+  { cat:'series-bw', title:'Asur',            tmdb:'96552',  year:'2020', rating:'8.4', runtime:'2 seasons', trailer:'LDirQBvwx7g', isTv:true },
+  { cat:'series-bw', title:'Bandish Bandits', tmdb:'106135', year:'2020', rating:'8.7', runtime:'1 season',  trailer:'UhU57OgGp50', isTv:true },
+  { cat:'series-bw', title:'Mismatched',      tmdb:'110316', year:'2020', rating:'8.4', runtime:'2 seasons', trailer:'uYmwNNkix-k', isTv:true },
+  { cat:'series-bw', title:'TVF Pitchers',    tmdb:'64490',  year:'2015', rating:'9.1', runtime:'2 seasons', trailer:'84Jk1OqDqOo', isTv:true },
+  { cat:'series-bw', title:'Criminal Justice',tmdb:'93784',  year:'2019', rating:'8.1', runtime:'3 seasons', trailer:'KPyNH7mZkGc', isTv:true },
 
-  { cat:'anime', title:'Death Note',                             tmdb:'13916',  year:'2006', rating:'9.0', runtime:'37 eps',    trailer:'NlJZ-YgAt-c', isTv:true },
-  { cat:'anime', title:'Naruto',                                 tmdb:'46260',  year:'2002', rating:'8.3', runtime:'220 eps',   trailer:'-G9BqkgZXRA', isTv:true },
-  { cat:'anime', title:'Attack on Titan',                        tmdb:'1429',   year:'2013', rating:'9.0', runtime:'87 eps',    trailer:'o_go-8TFBXs', isTv:true },
-  { cat:'anime', title:'Demon Slayer',                           tmdb:'85937',  year:'2019', rating:'8.7', runtime:'44 eps',    trailer:'VQGCKyvzIM4', isTv:true },
-  { cat:'anime', title:'One Punch Man',                          tmdb:'65930',  year:'2015', rating:'8.8', runtime:'24 eps',    trailer:'Poo5lqoWSGw', isTv:true },
-  { cat:'anime', title:'Tokyo Ghoul',                            tmdb:'61374',  year:'2014', rating:'7.8', runtime:'48 eps',    trailer:'ETHpMMV8rJU', isTv:true },
-  { cat:'anime', title:'Fullmetal Alchemist: Brotherhood',       tmdb:'31911',  year:'2009', rating:'9.1', runtime:'64 eps',    trailer:'--IcmZkvL0Q', isTv:true },
-  { cat:'anime', title:'One Piece',                              tmdb:'37854',  year:'1999', rating:'8.8', runtime:'1000+ eps', trailer:'S8_YwFLCh4U', isTv:true },
+  { cat:'anime', title:'Death Note',                       tmdb:'13916',  year:'2006', rating:'9.0', runtime:'37 eps',    trailer:'NlJZ-YgAt-c', isTv:true },
+  { cat:'anime', title:'Naruto',                           tmdb:'46260',  year:'2002', rating:'8.3', runtime:'220 eps',   trailer:'-G9BqkgZXRA', isTv:true },
+  { cat:'anime', title:'Attack on Titan',                  tmdb:'1429',   year:'2013', rating:'9.0', runtime:'87 eps',    trailer:'o_go-8TFBXs', isTv:true },
+  { cat:'anime', title:'Demon Slayer',                     tmdb:'85937',  year:'2019', rating:'8.7', runtime:'44 eps',    trailer:'VQGCKyvzIM4', isTv:true },
+  { cat:'anime', title:'One Punch Man',                    tmdb:'65930',  year:'2015', rating:'8.8', runtime:'24 eps',    trailer:'Poo5lqoWSGw', isTv:true },
+  { cat:'anime', title:'Tokyo Ghoul',                      tmdb:'61374',  year:'2014', rating:'7.8', runtime:'48 eps',    trailer:'ETHpMMV8rJU', isTv:true },
+  { cat:'anime', title:'Fullmetal Alchemist: Brotherhood', tmdb:'31911',  year:'2009', rating:'9.1', runtime:'64 eps',    trailer:'--IcmZkvL0Q', isTv:true },
+  { cat:'anime', title:'One Piece',                        tmdb:'37854',  year:'1999', rating:'8.8', runtime:'1000+ eps', trailer:'S8_YwFLCh4U', isTv:true },
 ];
 
 const posterCache = {};
@@ -96,13 +88,8 @@ async function fetchPoster(tmdb, isTv) {
   } catch { return null; }
 }
 
-let currentServer = 0;
-let currentImdb   = '';
-let currentTmdb   = '';
-let currentIsTv   = false;
-let useProxy      = false;
-let activeCat     = 'all';
-let filteredData  = [...CATALOGUE];
+let activeCat    = 'all';
+let filteredData = [...CATALOGUE];
 
 function setCat(btn, cat) {
   activeCat = cat;
@@ -129,6 +116,10 @@ function badgeFor(cat) {
   return { cls:'movie', label:'Movie' };
 }
 
+function goWatch(item) {
+  window.location = `watch.html?tmdb=${item.tmdb}${item.isTv ? '&tv=1' : ''}`;
+}
+
 function renderGrid() {
   const grid  = document.getElementById('cat-grid');
   const noRes = document.getElementById('cat-no-results');
@@ -140,15 +131,14 @@ function renderGrid() {
     const badge = badgeFor(item.cat);
     const card  = document.createElement('article');
     card.className = 'cat-card';
-    card.id = `card-${idx}`;
     card.innerHTML = `
       <div class="cat-card-poster">
         <div class="cat-poster-fallback" id="fallback-${idx}">
           <div class="cat-poster-spinner"></div>
         </div>
-        <img id="poster-${idx}" src="" alt="${item.title}" style="display:none;width:100%;height:100%;object-fit:cover;position:relative;z-index:1;transition:transform 0.4s ease" />
+        <img id="poster-${idx}" src="" alt="${item.title}" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform 0.4s ease" />
         <div class="cat-card-overlay">
-          <button class="cat-play-btn" onclick="event.stopPropagation();playItem(${idx})">
+          <button class="cat-play-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
           </button>
           <div class="cat-overlay-actions">
@@ -166,7 +156,7 @@ function renderGrid() {
         </div>
       </div>
     `;
-    card.addEventListener('click', () => playItem(idx));
+    card.addEventListener('click', () => goWatch(item));
     grid.appendChild(card);
 
     fetchPoster(item.tmdb, item.isTv).then(url => {
@@ -175,76 +165,16 @@ function renderGrid() {
       if (url && img) {
         img.src = url;
         img.style.display = 'block';
-        img.onload = () => { if (fallback) fallback.style.display = 'none'; };
+        img.onload  = () => { if (fallback) fallback.style.display = 'none'; };
         img.onerror = () => {
           img.style.display = 'none';
-          if (fallback) {
-            fallback.innerHTML = `<span class="fi">🎬</span><span class="ft">${item.title.toUpperCase()}</span>`;
-          }
+          if (fallback) fallback.innerHTML = `<span class="fi">🎬</span><span class="ft">${item.title.toUpperCase()}</span>`;
         };
       } else if (fallback) {
         fallback.innerHTML = `<span class="fi">🎬</span><span class="ft">${item.title.toUpperCase()}</span>`;
       }
     });
   });
-}
-
-function buildUrl() {
-  const srv = SERVERS[currentServer];
-  const raw = currentIsTv
-    ? srv.tv(currentImdb, 1, 1, currentTmdb)
-    : srv.movie(currentImdb, currentTmdb);
-  return useProxy ? PROXY_BASE + '?url=' + encodeURIComponent(raw) : raw;
-}
-
-function playItem(idx) {
-  const item    = filteredData[idx];
-  currentTmdb   = item.tmdb;
-  currentImdb   = '';
-  currentIsTv   = !!item.isTv;
-  currentServer = 0;
-  useProxy      = false;
-  document.getElementById('proxy-checkbox').checked = false;
-  openPlayerModal(item.title);
-  document.getElementById('movie-frame').src = buildUrl();
-}
-
-function openPlayerModal(title) {
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('player-modal').classList.add('open');
-  document.getElementById('player-modal').setAttribute('aria-hidden','false');
-  document.body.style.overflow = 'hidden';
-  renderServerBtns();
-}
-
-function renderServerBtns() {
-  const btns = document.getElementById('server-btns');
-  if (!btns) return;
-  btns.innerHTML = SERVERS.map((s, i) =>
-    `<button onclick="switchServer(${i})" style="font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid ${i===currentServer?'var(--gold)':'rgba(255,255,255,0.15)'};background:${i===currentServer?'rgba(201,168,76,0.15)':'none'};color:${i===currentServer?'var(--gold)':'var(--grey)'};cursor:pointer;font-family:inherit;transition:all .2s">${s.name}</button>`
-  ).join('');
-}
-
-function switchServer(idx) {
-  currentServer = idx;
-  renderServerBtns();
-  const frame = document.getElementById('movie-frame');
-  frame.src = '';
-  setTimeout(() => { frame.src = buildUrl(); }, 100);
-}
-
-function onProxyToggle() {
-  useProxy = document.getElementById('proxy-checkbox').checked;
-  const frame = document.getElementById('movie-frame');
-  frame.src = '';
-  setTimeout(() => { frame.src = buildUrl(); }, 100);
-}
-
-function closeModal() {
-  document.getElementById('player-modal').classList.remove('open');
-  document.getElementById('player-modal').setAttribute('aria-hidden','true');
-  document.body.style.overflow = '';
-  setTimeout(() => { document.getElementById('movie-frame').src = ''; }, 300);
 }
 
 function openTrailer(idx) {
@@ -263,8 +193,5 @@ function closeTrailer() {
   setTimeout(() => { document.getElementById('trailer-frame').src = ''; }, 300);
 }
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); closeTrailer(); }
-});
-
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTrailer(); });
 window.addEventListener('DOMContentLoaded', renderGrid);

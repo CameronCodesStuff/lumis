@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watch — LUMIS</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#080808" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LUMIS" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    .watch-page { padding-top: calc(var(--ticker-h) + var(--nav-h)); min-height: 100vh; }
+
+    .watch-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: var(--black);
+    }
+    .watch-backdrop img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.12;
+      filter: blur(12px) saturate(0.4);
+    }
+
+    .watch-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    .watch-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--grey);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      margin-bottom: 28px;
+      transition: color var(--transition);
+    }
+    .watch-back:hover { color: var(--gold); }
+
+    .watch-hero {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 36px;
+      margin-bottom: 36px;
+    }
+
+    .watch-poster {
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 2/3;
+      background: var(--black-3);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.15);
+      flex-shrink: 0;
+    }
+    .watch-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .watch-poster-fallback {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #1a0808 0%, #080d1a 100%);
+    }
+    .watch-poster-fallback .wfi { font-size: 48px; }
+    .watch-poster-fallback .wft { font-family: var(--font-caps); font-size: 14px; letter-spacing: 0.1em; color: var(--gold); text-align: center; padding: 0 12px; }
+
+    .watch-meta { display: flex; flex-direction: column; justify-content: flex-start; gap: 0; }
+
+    .watch-eyebrow {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .watch-type-badge {
+      font-family: var(--font-caps);
+      font-size: 11px; letter-spacing: 0.12em;
+      padding: 3px 10px; border-radius: 3px;
+    }
+    .watch-type-badge.movie  { background: #C0392B; color: #fff; }
+    .watch-type-badge.series { background: #1a4a8a; color: #fff; }
+    .watch-type-badge.anime  { background: #6a1a8a; color: #fff; }
+
+    .watch-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 900;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+    .watch-title em { font-style: italic; color: var(--gold-light); }
+
+    .watch-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .watch-tag {
+      font-size: 12px; color: var(--grey-light);
+      background: var(--black-3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px; padding: 3px 10px;
+    }
+    .watch-rating-big {
+      font-size: 22px; font-weight: 700;
+      color: var(--gold); margin-bottom: 16px;
+    }
+    .watch-tagline {
+      font-size: 14px; font-style: italic;
+      color: var(--grey); margin-bottom: 14px;
+      border-left: 3px solid var(--gold-dim);
+      padding-left: 12px;
+    }
+    .watch-overview {
+      font-size: 15px; line-height: 1.75;
+      color: rgba(245,240,232,0.8);
+      margin-bottom: 20px;
+    }
+    .watch-info-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; margin-bottom: 0;
+    }
+    .watch-info-item { font-size: 12px; color: var(--grey); }
+    .watch-info-item strong { color: var(--grey-light); }
+
+    .watch-player-section { margin-bottom: 28px; }
+
+    .watch-player-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .watch-player-title {
+      font-family: var(--font-caps);
+      font-size: 16px; letter-spacing: 0.1em;
+      color: var(--white);
+    }
+
+    .watch-controls {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+
+    .watch-proxy-toggle {
+      display: flex; align-items: center; gap: 7px;
+      cursor: pointer; user-select: none;
+      padding: 5px 12px; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: border-color 0.2s;
+    }
+    .watch-proxy-toggle:hover { border-color: var(--gold-dim); }
+    .watch-proxy-toggle input { display: none; }
+    .watch-proxy-box {
+      width: 14px; height: 14px;
+      border: 1.5px solid var(--grey); border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .watch-proxy-toggle input:checked ~ .watch-proxy-box {
+      background: var(--gold); border-color: var(--gold);
+    }
+    .watch-proxy-toggle input:checked ~ .watch-proxy-box::after {
+      content: ''; display: block;
+      width: 3px; height: 6px;
+      border: 2px solid var(--black);
+      border-top: none; border-left: none;
+      transform: rotate(45deg) translate(-1px,-1px);
+    }
+    .watch-proxy-toggle input:checked ~ .watch-proxy-label { color: var(--gold); }
+    .watch-proxy-label { font-size: 11px; color: var(--grey); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .server-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .server-btn {
+      font-size: 11px; padding: 5px 12px; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: none; color: var(--grey);
+      cursor: pointer; font-family: var(--font-body);
+      transition: all 0.2s;
+    }
+    .server-btn.active { border-color: var(--gold); background: rgba(201,168,76,0.12); color: var(--gold); }
+    .server-btn:hover:not(.active) { border-color: var(--gold-dim); color: var(--grey-light); }
+
+    .watch-player-wrap {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(201,168,76,0.12);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    }
+    .watch-player-wrap iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+    }
+
+    .season-ep-picker {
+      background: var(--black-2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 28px;
+    }
+    .sep-title {
+      font-family: var(--font-caps);
+      font-size: 15px; letter-spacing: 0.1em;
+      color: var(--white); margin-bottom: 16px;
+    }
+    .sep-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .sep-label { font-size: 12px; color: var(--grey); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .sep-select {
+      background: var(--black-3);
+      border: 1px solid rgba(201,168,76,0.2);
+      color: var(--white); border-radius: 6px;
+      padding: 8px 14px; font-family: var(--font-body);
+      font-size: 14px; cursor: pointer; outline: none;
+      min-width: 120px;
+      transition: border-color 0.2s;
+    }
+    .sep-select:focus { border-color: var(--gold); }
+
+    .ep-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+      gap: 6px; margin-top: 14px;
+    }
+    .ep-btn {
+      background: var(--black-3);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: var(--grey-light); border-radius: 6px;
+      padding: 8px 4px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: var(--font-body);
+      transition: all 0.2s; text-align: center;
+    }
+    .ep-btn:hover { border-color: var(--gold-dim); color: var(--gold-light); }
+    .ep-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
+    .watch-loading {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; padding: 60px;
+      color: var(--grey); font-size: 13px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .watch-spinner {
+      width: 40px; height: 40px;
+      border: 2px solid rgba(201,168,76,0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: wspin 0.8s linear infinite;
+    }
+    @keyframes wspin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .watch-hero { grid-template-columns: 1fr; }
+      .watch-poster { max-width: 200px; margin: 0 auto; }
+      .watch-info-grid { grid-template-columns: 1fr; }
+      .watch-content { padding: 16px 16px 60px; }
+      .watch-player-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ticker-bar">
+    <div class="ticker-inner">
+      <span class="ticker-label">NOW WATCHING</span>
+      <div class="ticker-track"><span id="ticker-text">★ LUMIS &nbsp;·&nbsp; LUXURY MOVIE SITE &nbsp;·&nbsp; ★ LUMIS &nbsp;·&nbsp; LUXURY MOVIE SITE &nbsp;·&nbsp;</span></div>
+    </div>
+  </div>
+
+  <nav class="nav scrolled">
+    <div class="nav-logo" onclick="window.location='index.html'">
+      <img src="images/logo.png" alt="LUMIS" class="nav-logo-img" />
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catalogue.html">Catalogue</a></li>
+    </ul>
+    <div class="nav-right">
+      <div class="avatar" onclick="window.location='index.html'">C</div>
+    </div>
+  </nav>
+
+  <div class="watch-backdrop">
+    <img id="backdrop-img" src="" alt="" />
+  </div>
+
+  <div class="watch-page">
+    <div class="watch-content" id="watch-content">
+      <div class="watch-loading" id="watch-loading">
+        <div class="watch-spinner"></div>
+        <span>Loading…</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TMDB_KEY  = '232a7338c36748bff95e5de149a21b95';
+    const TMDB_BASE = 'https://api.themoviedb.org/3';
+    const IMG_W500  = 'https://image.tmdb.org/t/p/w500';
+    const IMG_ORIG  = 'https://image.tmdb.org/t/p/original';
+    const PROXY_BASE = 'https://unblockedmovies.detlaffcameron.workers.dev/';
+
+    const SERVERS = [
+      { name:'Server 1', movie:(im,tm)=>im?`https://autoembed.co/movie/imdb/${im}`:`https://autoembed.co/movie/tmdb/${tm}`, tv:(im,s,e,tm)=>im?`https://autoembed.co/tv/imdb/${im}-${s}-${e}`:`https://autoembed.co/tv/tmdb/${tm}-${s}-${e}` },
+      { name:'Server 2', movie:(im,tm)=>`https://vidlink.pro/movie/${tm}`,                                                   tv:(im,s,e,tm)=>`https://vidlink.pro/tv/${tm}/${s}/${e}` },
+      { name:'Server 3', movie:(im,tm)=>`https://vidsrc.net/embed/movie?tmdb=${tm}`,                                        tv:(im,s,e,tm)=>`https://vidsrc.net/embed/tv?tmdb=${tm}&season=${s}&episode=${e}` },
+      { name:'Server 4', movie:(im,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1`,                    tv:(im,s,e,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1&s=${s}&e=${e}` }
+    ];
+
+    let STATE = {
+      tmdb: '', imdb: '', isTv: false,
+      season: 1, episode: 1,
+      server: 0, proxy: false,
+      seasons: []
+    };
+
+    function getUrl() {
+      const srv = SERVERS[STATE.server];
+      const raw = STATE.isTv
+        ? srv.tv(STATE.imdb, STATE.season, STATE.episode, STATE.tmdb)
+        : srv.movie(STATE.imdb, STATE.tmdb);
+      return STATE.proxy ? PROXY_BASE + '?url=' + encodeURIComponent(raw) : raw;
+    }
+
+    function reloadPlayer() {
+      const frame = document.getElementById('player-frame');
+      if (!frame) return;
+      frame.src = '';
+      setTimeout(() => { frame.src = getUrl(); }, 80);
+    }
+
+    function switchServer(idx) {
+      STATE.server = idx;
+      document.querySelectorAll('.server-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+      reloadPlayer();
+    }
+
+    function toggleProxy() {
+      STATE.proxy = document.getElementById('proxy-cb').checked;
+      reloadPlayer();
+    }
+
+    function selectSeason(val) {
+      STATE.season = parseInt(val);
+      STATE.episode = 1;
+      loadEpisodes();
+    }
+
+    function selectEp(ep) {
+      STATE.episode = ep;
+      document.querySelectorAll('.ep-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.ep) === ep));
+      reloadPlayer();
+      document.getElementById('now-playing-label').textContent = `S${STATE.season} E${ep}`;
+    }
+
+    async function loadEpisodes() {
+      const epGrid = document.getElementById('ep-grid');
+      if (!epGrid) return;
+      epGrid.innerHTML = '<div style="color:var(--grey);font-size:13px">Loading episodes…</div>';
+      try {
+        const r = await fetch(`${TMDB_BASE}/tv/${STATE.tmdb}/season/${STATE.season}?api_key=${TMDB_KEY}`);
+        const d = await r.json();
+        const eps = d.episodes || [];
+        epGrid.innerHTML = eps.map(ep =>
+          `<button class="ep-btn${ep.episode_number===STATE.episode?' active':''}" data-ep="${ep.episode_number}" onclick="selectEp(${ep.episode_number})" title="${ep.name||'Episode '+ep.episode_number}">${ep.episode_number}</button>`
+        ).join('');
+        reloadPlayer();
+        document.getElementById('now-playing-label').textContent = `S${STATE.season} E${STATE.episode}`;
+      } catch {
+        epGrid.innerHTML = `<div style="color:var(--grey);font-size:13px">Could not load episodes.</div>`;
+      }
+    }
+
+    function buildPlayerSection(title) {
+      return `
+        <div class="watch-player-section">
+          <div class="watch-player-header">
+            <span class="watch-player-title">▶ PLAYING <span id="now-playing-label">${STATE.isTv ? `S${STATE.season} E${STATE.episode}` : title.toUpperCase()}</span></span>
+            <div class="watch-controls">
+              <label class="watch-proxy-toggle" title="Route through proxy">
+                <input type="checkbox" id="proxy-cb" onchange="toggleProxy()" />
+                <span class="watch-proxy-box"></span>
+                <span class="watch-proxy-label">Proxy</span>
+              </label>
+              <div class="server-btns">
+                ${SERVERS.map((s,i)=>`<button class="server-btn${i===0?' active':''}" onclick="switchServer(${i})">${s.name}</button>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="watch-player-wrap">
+            <iframe id="player-frame" src="${getUrl()}" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildSeasonPicker(seasons) {
+      if (!seasons.length) return '';
+      return `
+        <div class="season-ep-picker">
+          <div class="sep-title">📺 Season & Episode</div>
+          <div class="sep-row">
+            <div>
+              <div class="sep-label">Season</div>
+              <select class="sep-select" id="season-select" onchange="selectSeason(this.value)">
+                ${seasons.map(s=>`<option value="${s.season_number}"${s.season_number===STATE.season?' selected':''}>${s.season_number===0?'Specials':'Season '+s.season_number}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="sep-label">Episodes</div>
+          <div class="ep-grid" id="ep-grid">
+            <div style="color:var(--grey);font-size:13px">Loading…</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPage(data, isMovie) {
+      const title     = isMovie ? (data.title || data.original_title) : (data.name || data.original_name);
+      const year      = isMovie ? (data.release_date||'').split('-')[0] : (data.first_air_date||'').split('-')[0];
+      const runtime   = isMovie ? (data.runtime ? `${Math.floor(data.runtime/60)}h ${data.runtime%60}m` : '') : (data.number_of_seasons ? `${data.number_of_seasons} season${data.number_of_seasons>1?'s':''}` : '');
+      const rating    = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
+      const genres    = (data.genres||[]).map(g=>g.name).join(', ') || 'N/A';
+      const country   = isMovie ? (data.production_countries||[])[0]?.name : (data.origin_country||[])[0];
+      const studio    = isMovie ? (data.production_companies||[])[0]?.name : (data.networks||[])[0]?.name;
+      const posterUrl = data.poster_path ? IMG_W500 + data.poster_path : '';
+      const backdropUrl = data.backdrop_path ? IMG_ORIG + data.backdrop_path : '';
+      const imdbUrl   = isMovie && data.imdb_id ? `https://imdb.com/title/${data.imdb_id}` : '';
+
+      if (backdropUrl) document.getElementById('backdrop-img').src = backdropUrl;
+      document.title = title + ' — LUMIS';
+      document.getElementById('ticker-text').innerHTML = `★ ${title.toUpperCase()} &nbsp;·&nbsp; LUMIS &nbsp;·&nbsp; ★ ${title.toUpperCase()} &nbsp;·&nbsp; LUMIS &nbsp;·&nbsp;`;
+
+      const badgeCls  = STATE.isTv ? (genres.toLowerCase().includes('anim') ? 'anime' : 'series') : 'movie';
+      const badgeLabel= STATE.isTv ? 'Series' : 'Movie';
+
+      const seasons = STATE.isTv ? (data.seasons||[]).filter(s=>s.season_number>0) : [];
+      STATE.seasons = seasons;
+
+      const content = document.getElementById('watch-content');
+      content.innerHTML = `
+        <a class="watch-back" href="catalogue.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+          Back to Catalogue
+        </a>
+
+        <div class="watch-hero">
+          <div class="watch-poster">
+            ${posterUrl
+              ? `<img src="${posterUrl}" alt="${title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="watch-poster-fallback" style="display:none"><span class="wfi">🎬</span><span class="wft">${title.toUpperCase()}</span></div>`
+              : `<div class="watch-poster-fallback"><span class="wfi">🎬</span><span class="wft">${title.toUpperCase()}</span></div>`
+            }
+          </div>
+          <div class="watch-meta">
+            <div class="watch-eyebrow">
+              <span class="watch-type-badge ${badgeCls}">${badgeLabel}</span>
+            </div>
+            <h1 class="watch-title">${title}</h1>
+            <div class="watch-tags">
+              ${year ? `<span class="watch-tag">${year}</span>` : ''}
+              ${runtime ? `<span class="watch-tag">${runtime}</span>` : ''}
+              ${genres ? `<span class="watch-tag">${genres}</span>` : ''}
+            </div>
+            <div class="watch-rating-big">★ ${rating}</div>
+            ${data.tagline ? `<div class="watch-tagline">${data.tagline}</div>` : ''}
+            <p class="watch-overview">${data.overview || 'No overview available.'}</p>
+            <div class="watch-info-grid">
+              ${studio ? `<div class="watch-info-item"><strong>Studio:</strong> ${studio}</div>` : ''}
+              ${country ? `<div class="watch-info-item"><strong>Country:</strong> ${country}</div>` : ''}
+              ${imdbUrl ? `<div class="watch-info-item"><a href="${imdbUrl}" target="_blank" style="color:var(--gold);font-size:12px;font-weight:600;">View on IMDb ↗</a></div>` : ''}
+            </div>
+          </div>
+        </div>
+
+        ${buildPlayerSection(title)}
+        ${STATE.isTv ? buildSeasonPicker(seasons) : ''}
+      `;
+
+      if (STATE.isTv && seasons.length) {
+        loadEpisodes();
+      }
+    }
+
+    async function init() {
+      const params = new URLSearchParams(location.search);
+      STATE.tmdb  = params.get('tmdb') || '';
+      STATE.isTv  = params.get('tv') === '1';
+
+      if (!STATE.tmdb) {
+        document.getElementById('watch-content').innerHTML = '<p style="color:var(--grey);padding:40px">No title selected. <a href="catalogue.html" style="color:var(--gold)">Go to catalogue</a></p>';
+        return;
+      }
+
+      const type = STATE.isTv ? 'tv' : 'movie';
+      try {
+        const r = await fetch(`${TMDB_BASE}/${type}/${STATE.tmdb}?api_key=${TMDB_KEY}&append_to_response=external_ids`);
+        const d = await r.json();
+        STATE.imdb = d.external_ids?.imdb_id || d.imdb_id || '';
+        renderPage(d, !STATE.isTv);
+      } catch(e) {
+        document.getElementById('watch-content').innerHTML = '<p style="color:var(--grey);padding:40px">Failed to load title. <a href="catalogue.html" style="color:var(--gold)">Go back</a></p>';
+      }
+    }
+
+    init();
+
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  </script>
+</body>
+</html>

@@ -272,3 +272,19 @@
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 480px) {
+  .cat-hero { padding: 28px 16px 20px; }
+  .cat-hero-title { font-size: clamp(28px, 8vw, 44px); }
+  .cat-hero-sub { font-size: 13px; }
+  .cat-search-input { font-size: 14px; }
+  .cat-filter-pills { gap: 6px; }
+  .cat-pill { padding: 5px 12px; font-size: 12px; }
+  .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cat-card-title { font-size: 12px; }
+  .cat-card-info { padding: 8px 10px; }
+  .cat-card-meta { font-size: 10px; }
+  .cat-play-btn { width: 40px; height: 40px; }
+  .cat-type-badge { font-size: 9px; padding: 2px 5px; }
+  .cat-main { padding: 20px 12px 60px; }
+}
