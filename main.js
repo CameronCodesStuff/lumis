@@ -5,15 +5,12 @@ const IMG_BASE  = 'https://image.tmdb.org/t/p/';
 const VS_KEY = 'cYuiNXmhxzkgsXDn';
 
 const SERVERS = [
-  { name:'Server 1', movie:(im,tm)=>im?`https://autoembed.co/movie/imdb/${im}`:`https://autoembed.co/movie/tmdb/${tm}`,           tv:(im,s,e,tm)=>im?`https://autoembed.co/tv/imdb/${im}-${s}-${e}`:`https://autoembed.co/tv/tmdb/${tm}-${s}-${e}` },
-  { name:'Server 2', movie:(im,tm)=>`https://vidlink.pro/movie/${tm}`,                                                            tv:(im,s,e,tm)=>`https://vidlink.pro/tv/${tm}/${s}/${e}` },
-  { name:'Server 3', movie:(im,tm)=>`https://vidsrc.net/embed/movie?tmdb=${tm}`,                                                 tv:(im,s,e,tm)=>`https://vidsrc.net/embed/tv?tmdb=${tm}&season=${s}&episode=${e}` },
-  { name:'Server 4', movie:(im,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1`,                             tv:(im,s,e,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1&s=${s}&e=${e}` },
-  { name:'Server 5', movie:(im,tm)=>`https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tm}&type=movie`,                    tv:(im,s,e,tm)=>`https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tm}&type=tv&season=${s}&episode=${e}` },
-  { name:'Server 6', movie:(im,tm)=>`https://dulo.tv/embed/movie/${tm}`,                                                         tv:(im,s,e,tm)=>`https://dulo.tv/embed/tv/${tm}/${s}/${e}` },
-  { name:'Server 7', movie:(im,tm)=>`https://cinehd.app/embed/${tm}`,                                                            tv:(im,s,e,tm)=>`https://cinehd.app/embed/${tm}?season=${s}&episode=${e}` },
-  { name:'PPV Live', movie:(im,tm)=>null, tv:(im,s,e,tm)=>null, link:true, url:'https://ppv.to/', label:'PPV Live Streams' },
-  { name:'OpenLoad', movie:(im,tm)=>null, tv:(im,s,e,tm)=>`https://openloadmovies.tv/tvseries/${tm}-season-${s}/`, link:true, label:'OpenLoadMovies (TV)' },
+  { name: 'Server 1', movie: (imdb, tmdb) => imdb ? `https://autoembed.co/movie/imdb/${imdb}` : `https://autoembed.co/movie/tmdb/${tmdb}`, tv: (imdb, s, e, tmdb) => imdb ? `https://autoembed.co/tv/imdb/${imdb}-${s}-${e}` : `https://autoembed.co/tv/tmdb/${tmdb}-${s}-${e}` },
+  { name: 'Server 2', movie: (imdb, tmdb) => `https://vidlink.pro/movie/${tmdb}`,                                                          tv: (imdb, s, e, tmdb) => `https://vidlink.pro/tv/${tmdb}/${s}/${e}` },
+  { name: 'Server 3', movie: (imdb, tmdb) => `https://vidsrc.net/embed/movie?tmdb=${tmdb}`,                                               tv: (imdb, s, e, tmdb) => `https://vidsrc.net/embed/tv?tmdb=${tmdb}&season=${s}&episode=${e}` },
+  { name: 'Server 4', movie: (imdb, tmdb) => `https://multiembed.mov/directstream.php?video_id=${tmdb}&tmdb=1`,                           tv: (imdb, s, e, tmdb) => `https://multiembed.mov/directstream.php?video_id=${tmdb}&tmdb=1&s=${s}&e=${e}` },
+  { name: 'Server 5', movie: (imdb, tmdb) => `https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tmdb}&type=movie`,                  tv: (imdb, s, e, tmdb) => `https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tmdb}&type=tv&season=${s}&episode=${e}` },
+  { name: 'Server 6', movie: (imdb, tmdb) => null, tv: (imdb, s, e, tmdb) => `https://openloadmovies.tv/tvseries/${tmdb}-season-${s}/`, link: true },
 ];
 
 let STATE = { page: 1, genre: '', query: '', totalPages: 1, loading: false };
