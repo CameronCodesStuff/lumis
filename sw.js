@@ -1,21 +1,21 @@
-const CACHE = 'lumis-v3';
+const CACHE = 'lumis-v4';
 const PRECACHE = [
-  '/index.html',
-  '/catalogue.html',
-  '/watch.html',
-  '/history.html',
-  '/404.html',
-  '/anime-home.html',
-  '/anime-detail.html',
-  '/anime-watch.html',
-  '/style.css',
-  '/catalogue.css',
-  '/anime.css',
-  '/main.js',
-  '/catalogue.js',
-  '/anime-app.js',
-  '/images/logo.png',
-  '/images/endgame.jpg'
+  '/lumis/index.html',
+  '/lumis/catalogue.html',
+  '/lumis/watch.html',
+  '/lumis/history.html',
+  '/lumis/404.html',
+  '/lumis/anime-home.html',
+  '/lumis/anime-detail.html',
+  '/lumis/anime-watch.html',
+  '/lumis/style.css',
+  '/lumis/catalogue.css',
+  '/lumis/anime.css',
+  '/lumis/main.js',
+  '/lumis/catalogue.js',
+  '/lumis/anime-app.js',
+  '/lumis/images/logo.png',
+  '/lumis/images/endgame.jpg'
 ];
 
 self.addEventListener('install', e => {
