@@ -2,11 +2,15 @@ const TMDB_KEY  = '232a7338c36748bff95e5de149a21b95';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const IMG_BASE  = 'https://image.tmdb.org/t/p/';
 
+const VS_KEY = 'cYuiNXmhxzkgsXDn';
+
 const SERVERS = [
   { name: 'Server 1', movie: (imdb, tmdb) => imdb ? `https://autoembed.co/movie/imdb/${imdb}` : `https://autoembed.co/movie/tmdb/${tmdb}`, tv: (imdb, s, e, tmdb) => imdb ? `https://autoembed.co/tv/imdb/${imdb}-${s}-${e}` : `https://autoembed.co/tv/tmdb/${tmdb}-${s}-${e}` },
   { name: 'Server 2', movie: (imdb, tmdb) => `https://vidlink.pro/movie/${tmdb}`,                                                          tv: (imdb, s, e, tmdb) => `https://vidlink.pro/tv/${tmdb}/${s}/${e}` },
   { name: 'Server 3', movie: (imdb, tmdb) => `https://vidsrc.net/embed/movie?tmdb=${tmdb}`,                                               tv: (imdb, s, e, tmdb) => `https://vidsrc.net/embed/tv?tmdb=${tmdb}&season=${s}&episode=${e}` },
-  { name: 'Server 4', movie: (imdb, tmdb) => `https://multiembed.mov/directstream.php?video_id=${tmdb}&tmdb=1`,                           tv: (imdb, s, e, tmdb) => `https://multiembed.mov/directstream.php?video_id=${tmdb}&tmdb=1&s=${s}&e=${e}` }
+  { name: 'Server 4', movie: (imdb, tmdb) => `https://multiembed.mov/directstream.php?video_id=${tmdb}&tmdb=1`,                           tv: (imdb, s, e, tmdb) => `https://multiembed.mov/directstream.php?video_id=${tmdb}&tmdb=1&s=${s}&e=${e}` },
+  { name: 'Server 5', movie: (imdb, tmdb) => `https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tmdb}&type=movie`,                  tv: (imdb, s, e, tmdb) => `https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tmdb}&type=tv&season=${s}&episode=${e}` },
+  { name: 'Server 6', movie: (imdb, tmdb) => null, tv: (imdb, s, e, tmdb) => `https://openloadmovies.tv/tvseries/${tmdb}-season-${s}/`, link: true },
 ];
 
 let STATE = { page: 1, genre: '', query: '', totalPages: 1, loading: false };
