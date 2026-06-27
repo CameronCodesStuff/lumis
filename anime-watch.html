@@ -205,17 +205,28 @@
       });
     }
 
+    const ANIME_PROXY = 'https://unblockedmovies.detlaffcameron.workers.dev/';
+    let useAnimeProxy = false;
+
+    function buildUrl(idx) {
+      const raw = ANIME_SOURCES[idx].url(animeId, curEp);
+      return useAnimeProxy ? ANIME_PROXY + '?url=' + encodeURIComponent(raw) : raw;
+    }
+
     function loadFrame(idx) {
       srcIdx = idx;
       document.querySelectorAll('.anime-src-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
       const box = document.getElementById('player-box');
       box.querySelector('iframe')?.remove();
       const f = document.createElement('iframe');
-      const title = animeData ? (animeData.title.english || animeData.title.romaji) : '';
-      f.src = ANIME_SOURCES[idx].url(animeId, curEp, title);
-      f.allowFullscreen = true;
-      f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+      f.src = buildUrl(idx);
+      f.allow = 'autoplay; picture-in-picture; encrypted-media';
       box.appendChild(f);
+    }
+
+    function onAnimeProxyToggle() {
+      useAnimeProxy = document.getElementById('anime-proxy-cb').checked;
+      loadFrame(srcIdx);
     }
 
     function goEp(ep) {

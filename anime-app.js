@@ -205,10 +205,8 @@ function lumisToast(msg) {
 }
 
 const ANIME_SOURCES = [
-  { name: 'Animetsu',  url: (id, ep, title) => `https://animetsu.cc/search?q=${encodeURIComponent(title||'')}` },
-  { name: 'AnimeLok',  url: (id, ep, title) => `https://animelok.online/search?q=${encodeURIComponent(title||'')}` },
-  { name: 'HiAnime',   url: (id, ep, title) => `https://hianime.to/search?keyword=${encodeURIComponent(title||'')}` },
-  { name: 'aniwave',   url: (id, ep, title) => `https://aniwave.to/filter?keyword=${encodeURIComponent(title||'')}` },
-  { name: 'VidSrc',    url: (id, ep, title) => `https://vidsrc.dev/embed/anime?anilist=${id}&episode=${ep}` },
-  { name: 'VidBinge',  url: (id, ep, title) => `https://vidbinge.dev/embed/anime/${id}/${ep}` },
+  { name: 'AutoEmbed',  url: (id, ep) => `https://autoembed.net/anime/anilist/${id}-${ep}` },
+  { name: 'AutoEmbed2', url: (id, ep) => `https://autoembed.co/anime/anilist/${id}-${ep}` },
+  { name: 'VidSrc',    url: (id, ep) => `https://vidsrc.dev/embed/anime?anilist=${id}&episode=${ep}` },
+  { name: 'VidBinge',  url: (id, ep) => `https://vidbinge.dev/embed/anime/${id}/${ep}` },
 ];
