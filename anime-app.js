@@ -118,8 +118,11 @@ const AS = {
 };
 
 const AP = {
+  _navigating: false,
   get: n => new URLSearchParams(location.search).get(n),
   go(page, params) {
+    if (this._navigating) return;
+    this._navigating = true;
     const u = new URL(page, location.origin);
     Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
     location.href = u.toString();
