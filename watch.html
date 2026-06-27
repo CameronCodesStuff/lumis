@@ -340,12 +340,15 @@
     const VS_KEY = 'cYuiNXmhxzkgsXDn';
 
     const SERVERS = [
-      { name:'Server 1', movie:(im,tm)=>im?`https://autoembed.co/movie/imdb/${im}`:`https://autoembed.co/movie/tmdb/${tm}`,                              tv:(im,s,e,tm)=>im?`https://autoembed.co/tv/imdb/${im}-${s}-${e}`:`https://autoembed.co/tv/tmdb/${tm}-${s}-${e}` },
-      { name:'Server 2', movie:(im,tm)=>`https://vidlink.pro/movie/${tm}`,                                                                               tv:(im,s,e,tm)=>`https://vidlink.pro/tv/${tm}/${s}/${e}` },
-      { name:'Server 3', movie:(im,tm)=>`https://vidsrc.net/embed/movie?tmdb=${tm}`,                                                                    tv:(im,s,e,tm)=>`https://vidsrc.net/embed/tv?tmdb=${tm}&season=${s}&episode=${e}` },
-      { name:'Server 4', movie:(im,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1`,                                                tv:(im,s,e,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1&s=${s}&e=${e}` },
-      { name:'Server 5', movie:(im,tm)=>`https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tm}&type=movie`,                                       tv:(im,s,e,tm)=>`https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tm}&type=tv&season=${s}&episode=${e}` },
-      { name:'Server 6', movie:(im,tm)=>null, tv:(im,s,e,tm)=>`https://openloadmovies.tv/tvseries/${tm}-season-${s}/`, link:true },
+      { name:'Server 1', movie:(im,tm)=>im?`https://autoembed.co/movie/imdb/${im}`:`https://autoembed.co/movie/tmdb/${tm}`,                            tv:(im,s,e,tm)=>im?`https://autoembed.co/tv/imdb/${im}-${s}-${e}`:`https://autoembed.co/tv/tmdb/${tm}-${s}-${e}` },
+      { name:'Server 2', movie:(im,tm)=>`https://vidlink.pro/movie/${tm}`,                                                                             tv:(im,s,e,tm)=>`https://vidlink.pro/tv/${tm}/${s}/${e}` },
+      { name:'Server 3', movie:(im,tm)=>`https://vidsrc.net/embed/movie?tmdb=${tm}`,                                                                  tv:(im,s,e,tm)=>`https://vidsrc.net/embed/tv?tmdb=${tm}&season=${s}&episode=${e}` },
+      { name:'Server 4', movie:(im,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1`,                                              tv:(im,s,e,tm)=>`https://multiembed.mov/directstream.php?video_id=${tm}&tmdb=1&s=${s}&e=${e}` },
+      { name:'Server 5', movie:(im,tm)=>`https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tm}&type=movie`,                                     tv:(im,s,e,tm)=>`https://videospider.in/getvideo?key=${VS_KEY}&tmdb_id=${tm}&type=tv&season=${s}&episode=${e}` },
+      { name:'Server 6', movie:(im,tm)=>`https://dulo.tv/embed/movie/${tm}`,                                                                          tv:(im,s,e,tm)=>`https://dulo.tv/embed/tv/${tm}/${s}/${e}` },
+      { name:'Server 7', movie:(im,tm)=>`https://cinehd.app/embed/${tm}`,                                                                             tv:(im,s,e,tm)=>`https://cinehd.app/embed/${tm}?season=${s}&episode=${e}` },
+      { name:'PPV Live', movie:(im,tm)=>null, tv:(im,s,e,tm)=>null, link:true, url:'https://ppv.to/', label:'PPV Live Streams' },
+      { name:'OpenLoad', movie:(im,tm)=>null, tv:(im,s,e,tm)=>`https://openloadmovies.tv/tvseries/${tm}-season-${s}/`, link:true, label:'OpenLoadMovies (TV)' },
     ];
 
     const STATE = {
@@ -392,51 +395,59 @@
     }
 
     function reloadPlayer() {
-      const frame  = document.getElementById('player-frame');
-      const linkEl = document.getElementById('server-link-btn');
-      const srv    = SERVERS[STATE.server];
+      const frame = document.getElementById('player-frame');
+      const srv   = SERVERS[STATE.server];
       saveProgress();
 
-      // Hide/show external link button vs iframe
+      // Remove any existing link panel
+      const old = document.getElementById('server-link-btn');
+      if (old) old.remove();
+
       if (srv.link) {
-        const url = STATE.isTv ? srv.tv(STATE.imdb, STATE.season, STATE.episode, STATE.tmdb) : null;
+        // Link-type server — show a panel instead of iframe
         if (frame) { frame.src = ''; frame.style.display = 'none'; }
-        if (!linkEl && url) {
-          const wrap = document.querySelector('.watch-player-wrap');
-          if (wrap) {
-            const btn = document.createElement('a');
-            btn.id = 'server-link-btn';
-            btn.href = url;
-            btn.target = '_blank';
-            btn.rel = 'noopener noreferrer';
-            btn.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--gold);text-decoration:none;font-family:var(--font-caps);font-size:18px;letter-spacing:0.1em;background:var(--black-2)';
-            btn.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Open on OpenLoadMovies ↗<span style="font-size:11px;color:var(--grey);font-family:var(--font-body);letter-spacing:0">Opens in a new tab — TV shows only</span>';
-            wrap.appendChild(btn);
+        const dest = srv.url
+          ? srv.url  // fixed URL (PPV)
+          : STATE.isTv
+            ? srv.tv(STATE.imdb, STATE.season, STATE.episode, STATE.tmdb)
+            : srv.movie(STATE.imdb, STATE.tmdb);
+
+        const wrap = document.querySelector('.watch-player-wrap');
+        if (wrap) {
+          const panel = document.createElement('div');
+          panel.id = 'server-link-btn';
+          panel.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:var(--black-2);padding:32px;text-align:center';
+
+          if (dest) {
+            const label = srv.label || 'External Site';
+            panel.innerHTML = `
+              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(201,168,76,0.6)" stroke-width="1.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--white)">${label}</div>
+              <div style="font-size:13px;color:var(--grey);max-width:320px;line-height:1.6">This server opens in a new tab.</div>
+              <a href="${dest}" target="_blank" rel="noopener noreferrer"
+                style="display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--black);font-family:var(--font-body);font-size:14px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;padding:13px 28px;border-radius:6px;text-decoration:none;transition:background 0.2s"
+                onmouseover="this.style.background='var(--gold-light)'" onmouseout="this.style.background='var(--gold)'">
+                Open ${label} ↗
+              </a>`;
+          } else {
+            panel.innerHTML = `<div style="color:var(--grey);font-size:14px">This server is not available for this content type.<br>Try a different server.</div>`;
           }
-        } else if (linkEl && url) {
-          linkEl.href = url;
-          linkEl.style.display = 'flex';
-        } else if (linkEl && !url) {
-          linkEl.style.display = 'none';
+          wrap.appendChild(panel);
         }
         return;
       }
 
       // Normal iframe server
       if (frame) frame.style.display = 'block';
-      const existingLink = document.getElementById('server-link-btn');
-      if (existingLink) existingLink.style.display = 'none';
-
       const url = getUrl();
       if (!url) {
-        // Server doesn't support this type (e.g. Server 6 movie)
-        if (frame) { frame.src = ''; frame.srcdoc = '<div style="color:#888;display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;font-size:14px;text-align:center;padding:20px">This server does not support this content type.<br>Try a different server.</div>'; }
+        if (frame) {
+          frame.src = '';
+          frame.srcdoc = '<div style="color:#888;display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;font-size:14px;text-align:center;padding:20px">This server does not support this content type.<br/>Try another server.</div>';
+        }
         return;
       }
-      if (frame) {
-        frame.src = '';
-        setTimeout(() => { frame.src = url; }, 80);
-      }
+      if (frame) { frame.src = ''; setTimeout(() => { frame.src = url; }, 80); }
     }
 
     function updateOgTags(title, description, posterUrl) {
@@ -567,7 +578,7 @@
             </div>
           </div>
           <div class="watch-player-wrap">
-            <iframe id="player-frame" src="${getUrl()}" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
+            <iframe id="player-frame" src="${getUrl()}" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" sandbox="allow-scripts allow-forms allow-presentation allow-popups"></iframe>
           </div>
         </div>
       `;
