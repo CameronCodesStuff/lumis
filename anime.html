@@ -28,11 +28,44 @@
       color: #C9A84C; letter-spacing: 0.05em;
     }
     .topbar-home {
-      margin-left: auto; font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       font-size: 12px; color: #888; text-decoration: none;
-      transition: color 0.2s;
+      transition: color 0.2s; margin-left: auto;
     }
     .topbar-home:hover { color: #C9A84C; }
+
+    .proxy-wrap {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.12);
+      cursor: pointer; user-select: none;
+      transition: border-color 0.2s;
+    }
+    .proxy-wrap:hover { border-color: #7A621C; }
+    .proxy-wrap input { display: none; }
+    .proxy-box {
+      width: 13px; height: 13px;
+      border: 1.5px solid #666; border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .proxy-wrap input:checked ~ .proxy-box {
+      background: #C9A84C; border-color: #C9A84C;
+    }
+    .proxy-wrap input:checked ~ .proxy-box::after {
+      content: ''; display: block;
+      width: 3px; height: 6px;
+      border: 2px solid #080808;
+      border-top: none; border-left: none;
+      transform: rotate(45deg) translate(-1px,-1px);
+    }
+    .proxy-label {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 11px; color: #888; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .proxy-wrap input:checked ~ .proxy-label { color: #C9A84C; }
 
     iframe {
       position: fixed;
@@ -47,12 +80,29 @@
     <a href="index.html"><img src="images/logo.png" alt="LUMIS" /></a>
     <div class="topbar-sep"></div>
     <span class="topbar-name">Anime — Powered by Animetsu</span>
+    <label class="proxy-wrap" title="Route through proxy">
+      <input type="checkbox" id="proxy-cb" onchange="toggleProxy()" />
+      <span class="proxy-box"></span>
+      <span class="proxy-label">Proxy</span>
+    </label>
     <a href="index.html" class="topbar-home">← Back to LUMIS</a>
   </div>
   <iframe
+    id="frame"
     src="https://animetsu.cc/home"
     allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
     allowfullscreen>
   </iframe>
+  <script>
+    const PROXY = 'https://unblockedmovies.detlaffcameron.workers.dev/';
+    const DIRECT = 'https://animetsu.cc/home';
+
+    function toggleProxy() {
+      const use = document.getElementById('proxy-cb').checked;
+      document.getElementById('frame').src = use
+        ? PROXY + '?url=' + encodeURIComponent(DIRECT)
+        : DIRECT;
+    }
+  </script>
 </body>
 </html>
