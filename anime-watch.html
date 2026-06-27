@@ -64,9 +64,8 @@
           </div>
         </div>
 
-        <div class="anime-src-bar">
-          <span>Source:</span>
-          <div id="src-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <div class="anime-src-bar" style="flex-direction:column;align-items:flex-start">
+          <div id="src-btns" style="display:flex;gap:6px;flex-wrap:wrap;max-height:140px;overflow-y:auto;padding:4px 0"></div>
         </div>
 
         <div class="anime-hint">
@@ -110,14 +109,94 @@
     if (!animeId) location.href = 'anime-home.html';
     document.getElementById('back-link').href = `anime-detail.html?id=${animeId}`;
 
+    const EXTERNAL_SITES = [
+      { name:'Animetsu',       url:'https://animetsu.cc/home' },
+      { name:'AnimeLok',       url:'https://animelok.online/home' },
+      { name:'aniwave',        url:'https://aniwave.to/home' },
+      { name:'AllManga',       url:'https://allmanga.to/' },
+      { name:'AniHQ',          url:'https://anihq.to/' },
+      { name:'AnimeRealms',    url:'https://www.animerealms.org/' },
+      { name:'Lunar',          url:'https://lunaranime.ru/' },
+      { name:'AniZone',        url:'https://anizone.to/' },
+      { name:'Anistream',      url:'https://anistream.one/' },
+      { name:'AniKuro',        url:'https://anikuro.to/' },
+      { name:'AnimeParadise',  url:'https://www.animeparadise.moe/' },
+      { name:'Rive',           url:'https://www.rivestream.app/' },
+      { name:'AnimeHub',       url:'https://animehub.ac/' },
+      { name:'Anidap',         url:'https://anidap.se/' },
+      { name:'AnimeOnsen',     url:'https://animeonsen.xyz/' },
+      { name:'FireAnime',      url:'https://fireani.me/' },
+      { name:'JustAnime',      url:'https://justanime.to/' },
+      { name:'Enma',           url:'https://www.enma.lol/' },
+      { name:'Senshi',         url:'https://senshi.live/' },
+      { name:'yugen',          url:'https://yugen.to/' },
+      { name:'1anime',         url:'https://1ani.me/' },
+      { name:'AniPlay',        url:'https://aniplay.to/' },
+      { name:'AnimeKhor',      url:'https://animekhor.org/' },
+      { name:'KayoAnime',      url:'https://kayoanime.com/' },
+      { name:'AnimeSilo',      url:'https://animesilo.cc/' },
+      { name:'AnimeNoSub',     url:'https://animenosub.to/' },
+      { name:'Kiroku',         url:'https://kiroku.my/' },
+      { name:'ReAnime',        url:'https://reanime.to/' },
+      { name:'AniDoor',        url:'https://anidoor.me/' },
+      { name:'AnimeXin',       url:'https://animexin.dev/' },
+      { name:'LMAnime',        url:'https://lmanime.com/' },
+      { name:'CKSub',          url:'https://cksub.org/' },
+      { name:'MyAnime',        url:'https://myanime.live/' },
+      { name:'Anoboye',        url:'https://anoboye.com/' },
+      { name:'Yomi',           url:'https://yomi.to/' },
+      { name:'KissAnime',      url:'https://kissanime.com.ru/' },
+      { name:'WCOStream',      url:'https://wcostream.cc/' },
+      { name:'AnimeDAO',       url:'https://animedao.to/' },
+      { name:'GogoAnimes',     url:'https://gogoanimes.fi/' },
+      { name:'AnimeRush',      url:'https://animerush.tv/' },
+      { name:'AnimeFreak',     url:'https://animefreak.tv/' },
+      { name:'GenoAnime',      url:'https://genoanime.com/' },
+      { name:'AnimeOwl',       url:'https://animeowl.live/' },
+      { name:'Marin',          url:'https://marin.moe/' },
+      { name:'AnimeFever',     url:'https://animefever.cc/' },
+      { name:'GogoAnime',      url:'https://gogoanime.by/' },
+      { name:'AnimeLand',      url:'https://w7.animeland.tv/' },
+      { name:'AnimeSaturn',    url:'https://animesaturn.cx/' },
+    ];
+
     function buildSrcBtns() {
       const row = document.getElementById('src-btns');
       row.innerHTML = '';
+
+      // Embed sources
+      const embedLabel = document.createElement('span');
+      embedLabel.style.cssText = 'font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:0.1em;align-self:center;white-space:nowrap';
+      embedLabel.textContent = 'Embed:';
+      row.appendChild(embedLabel);
+
       ANIME_SOURCES.forEach((s, i) => {
         const b = document.createElement('button');
         b.className = `anime-src-btn${i===srcIdx?' active':''}`;
         b.textContent = s.name;
         b.addEventListener('click', () => { srcIdx = i; loadFrame(i); });
+        row.appendChild(b);
+      });
+
+      // Divider
+      const div = document.createElement('span');
+      div.style.cssText = 'width:1px;height:20px;background:rgba(255,255,255,0.1);align-self:center;flex-shrink:0;margin:0 4px';
+      row.appendChild(div);
+
+      // External label
+      const extLabel = document.createElement('span');
+      extLabel.style.cssText = 'font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:0.1em;align-self:center;white-space:nowrap';
+      extLabel.textContent = 'External ↗:';
+      row.appendChild(extLabel);
+
+      EXTERNAL_SITES.forEach(s => {
+        const b = document.createElement('a');
+        b.className = 'anime-src-btn';
+        b.textContent = s.name + ' ↗';
+        b.href = s.url;
+        b.target = '_blank';
+        b.rel = 'noopener noreferrer';
+        b.style.textDecoration = 'none';
         row.appendChild(b);
       });
     }
@@ -126,10 +205,10 @@
       srcIdx = idx;
       document.querySelectorAll('.anime-src-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
       const box = document.getElementById('player-box');
-      const existing = box.querySelector('iframe');
-      if (existing) existing.remove();
+      box.querySelector('iframe')?.remove();
       const f = document.createElement('iframe');
       f.src = ANIME_SOURCES[idx].url(animeId, curEp);
+      f.allowFullscreen = true;
       f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
       f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
       box.appendChild(f);
