@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Anime — LUMIS</title>
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#080808" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:      #C9A84C;
+      --gold-dim:  #7A621C;
+      --gold-lt:   #E8C96A;
+      --black:     #080808;
+      --black-2:   #111111;
+      --black-3:   #1A1A1A;
+      --black-4:   #242424;
+      --grey:      #888;
+      --grey-lt:   #BBB;
+      --white:     #F5F0E8;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-caps: 'Bebas Neue', sans-serif;
+      --t:         0.2s ease;
+    }
+
+    html, body { height: 100%; overflow: hidden; background: var(--black); color: var(--white); font-family: var(--font-body); }
+
+    /* ── Top bar ── */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      height: 52px;
+      background: rgba(8,8,8,0.98); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(201,168,76,0.18);
+      display: flex; align-items: center; gap: 10px; padding: 0 16px;
+    }
+
+    .top-logo {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .top-logo img { height: 32px; width: auto; object-fit: contain; filter: drop-shadow(0 0 6px rgba(201,168,76,0.3)); }
+
+    .top-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+
+    .top-site-name {
+      font-size: 13px; font-weight: 600; color: var(--gold);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .top-btn {
+      padding: 5px 14px; border-radius: 100px; font-size: 12px; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.12); background: none;
+      color: var(--grey); cursor: pointer; transition: all var(--t); flex-shrink: 0;
+      font-family: var(--font-body);
+    }
+    .top-btn:hover { border-color: var(--gold-dim); color: var(--gold-lt); }
+    .top-btn.active { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold); }
+
+    .top-link {
+      font-size: 12px; color: var(--grey); text-decoration: none; flex-shrink: 0;
+      transition: color var(--t);
+    }
+    .top-link:hover { color: var(--gold); }
+
+    /* ── Layout ── */
+    .layout { position: fixed; top: 52px; left: 0; right: 0; bottom: 0; display: flex; }
+
+    /* ── Side panel ── */
+    .side-panel {
+      width: 270px; flex-shrink: 0;
+      background: rgba(8,8,8,0.99);
+      border-right: 1px solid rgba(201,168,76,0.1);
+      display: flex; flex-direction: column;
+      transition: width 0.25s ease, opacity 0.25s ease;
+      overflow: hidden;
+    }
+    .side-panel.collapsed { width: 0; opacity: 0; }
+
+    .panel-search-wrap { padding: 12px 12px 8px; flex-shrink: 0; }
+    .panel-search {
+      width: 100%; background: var(--black-3);
+      border: 1px solid rgba(201,168,76,0.2); border-radius: 8px;
+      padding: 7px 12px; color: var(--white); font-size: 13px;
+      outline: none; transition: border-color var(--t); font-family: var(--font-body);
+    }
+    .panel-search:focus { border-color: var(--gold); }
+    .panel-search::placeholder { color: var(--grey); }
+
+    .cat-row {
+      display: flex; gap: 5px; padding: 0 12px 8px;
+      overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
+    }
+    .cat-row::-webkit-scrollbar { display: none; }
+    .cat-pill {
+      flex-shrink: 0; padding: 3px 11px; border-radius: 100px;
+      font-size: 11px; font-weight: 700; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.08); background: transparent;
+      color: var(--grey); transition: all var(--t); font-family: var(--font-body);
+    }
+    .cat-pill:hover { border-color: var(--gold-dim); color: var(--gold-lt); }
+    .cat-pill.active { background: rgba(201,168,76,0.12); border-color: var(--gold); color: var(--gold); }
+
+    .site-count { font-size: 11px; color: var(--grey); padding: 0 12px 6px; flex-shrink: 0; }
+
+    .site-list {
+      flex: 1; overflow-y: auto; padding: 0 6px 12px;
+      scrollbar-width: thin; scrollbar-color: var(--black-4) transparent;
+    }
+
+    .site-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      transition: background var(--t); margin-bottom: 1px;
+    }
+    .site-card:hover { background: var(--black-3); }
+    .site-card.active { background: rgba(201,168,76,0.08); border-left: 2px solid var(--gold); padding-left: 8px; }
+
+    .site-favicon {
+      width: 22px; height: 22px; border-radius: 5px; flex-shrink: 0;
+      background: var(--black-4); overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--grey);
+    }
+    .site-favicon img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+
+    .site-info { flex: 1; min-width: 0; }
+    .site-name {
+      font-size: 13px; font-weight: 600; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .site-card.active .site-name { color: var(--gold); }
+
+    .site-tag {
+      font-size: 9px; font-weight: 700; padding: 2px 6px;
+      border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0;
+    }
+    .tag-sub      { background: rgba(34,211,238,.1);  color: #22d3ee; }
+    .tag-dub      { background: rgba(251,146,60,.1);  color: #fb923c; }
+    .tag-both     { background: rgba(201,168,76,.12); color: var(--gold); }
+    .tag-official { background: rgba(74,222,128,.1);  color: #4ade80; }
+    .tag-manga    { background: rgba(244,114,182,.1); color: #f472b6; }
+
+    .site-remove {
+      margin-left: auto; background: none; border: none; color: var(--grey);
+      font-size: 13px; cursor: pointer; padding: 3px 6px; border-radius: 5px;
+      transition: all 0.15s; flex-shrink: 0; line-height: 1;
+    }
+    .site-remove:hover { color: #f87171; background: rgba(248,113,113,0.1); }
+    .site-restore {
+      margin-left: auto; background: none; border: none; color: var(--gold);
+      font-size: 12px; cursor: pointer; padding: 2px 6px; border-radius: 5px;
+      font-weight: 600; transition: background 0.15s; flex-shrink: 0;
+      font-family: var(--font-body);
+    }
+    .site-restore:hover { background: rgba(201,168,76,0.12); }
+
+    .hidden-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 12px 6px; font-size: 11px;
+    }
+    .hidden-bar-count { color: var(--grey); cursor: pointer; transition: color var(--t); }
+    .hidden-bar-count:hover, .hidden-bar-count.active { color: var(--gold); }
+    .hidden-bar-reset {
+      background: none; border: none; color: var(--grey); font-size: 11px;
+      cursor: pointer; padding: 0; transition: color var(--t); font-family: var(--font-body);
+    }
+    .hidden-bar-reset:hover { color: #f87171; }
+
+    .site-card.is-hidden { opacity: 0.45; }
+    .site-card.is-hidden .site-name { text-decoration: line-through; }
+
+    .no-sites { text-align: center; padding: 28px 12px; color: var(--grey); font-size: 13px; }
+
+    /* ── iframe ── */
+    .frame-wrap { flex: 1; position: relative; }
+    .main-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+    /* ── Empty state ── */
+    .frame-empty {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; color: var(--grey); text-align: center; padding: 24px;
+      background: var(--black);
+    }
+    .frame-empty img { height: 64px; opacity: 0.6; filter: grayscale(0.5); }
+    .frame-empty h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--white); }
+    .frame-empty p { font-size: 13px; line-height: 1.7; max-width: 320px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--black-2); color: var(--white);
+      border: 1px solid rgba(201,168,76,0.25); border-radius: 8px;
+      padding: 10px 20px; font-size: 13px; z-index: 9999;
+      animation: toast-in 0.25s ease;
+    }
+    @keyframes toast-in { from { opacity:0; transform:translateX(-50%) translateY(8px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <a href="anime-home.html" class="top-logo">
+    <img src="images/logo.png" alt="LUMIS" />
+  </a>
+  <div class="top-sep"></div>
+  <span class="top-site-name" id="topSiteName">Select a site to begin</span>
+  <button class="top-btn active" id="toggleBtn" onclick="togglePanel()">≡ Sites</button>
+  <div class="top-sep"></div>
+  <a href="anime-home.html" class="top-link">← Anime</a>
+  <a href="index.html" class="top-link" style="margin-left:8px">Home</a>
+</div>
+
+<div class="layout">
+  <!-- Side panel -->
+  <div class="side-panel" id="sidePanel">
+    <div class="panel-search-wrap">
+      <input class="panel-search" id="siteSearch" placeholder="Search sites…" autocomplete="off" />
+    </div>
+    <div class="cat-row" id="catRow"></div>
+    <div class="site-count" id="siteCount"></div>
+    <div class="hidden-bar" id="hiddenBar" style="display:none">
+      <span class="hidden-bar-count" id="hiddenCount" onclick="toggleShowHidden()"></span>
+      <button class="hidden-bar-reset" onclick="restoreAll()">Restore all</button>
+    </div>
+    <div class="site-list" id="siteList"></div>
+  </div>
+
+  <!-- iframe -->
+  <div class="frame-wrap">
+    <div class="frame-empty" id="frameEmpty">
+      <img src="images/logo.png" alt="LUMIS" />
+      <h2>Choose a Site</h2>
+      <p>Pick any anime site from the list on the left. You can browse, search, and watch directly inside LUMIS.</p>
+    </div>
+    <iframe class="main-frame" id="frame" src="" allowfullscreen
+      allow="autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write"></iframe>
+  </div>
+</div>
+
+<script>
+let SITES = [
+  { name:'HiAnime',        url:'https://hianime.to/',                  tag:'sub',      top:true },
+  { name:'Miruro',         url:'https://www.miruro.tv/',               tag:'sub',      top:true },
+  { name:'AnimePahe',      url:'https://animepahe.ru/',                tag:'sub',      top:true },
+  { name:'Animetsu',       url:'https://animetsu.cc/home',             tag:'both',     top:true },
+  { name:'AnimeLok',       url:'https://animelok.online/home',         tag:'both',     top:true },
+  { name:'Marin',          url:'https://marin.moe/',                   tag:'sub',      top:true },
+  { name:'Twist',          url:'https://twist.moe/',                   tag:'sub',      top:true },
+  { name:'Rive',           url:'https://www.rivestream.app/',          tag:'both',     top:true },
+  { name:'aniwave',        url:'https://aniwave.to/home',              tag:'sub' },
+  { name:'AniZone',        url:'https://anizone.to/',                  tag:'sub' },
+  { name:'Anistream',      url:'https://anistream.one/',               tag:'sub' },
+  { name:'AniKuro',        url:'https://anikuro.to/',                  tag:'sub' },
+  { name:'AnimeParadise',  url:'https://www.animeparadise.moe/',       tag:'sub' },
+  { name:'Anidap',         url:'https://anidap.se/',                   tag:'sub' },
+  { name:'AnimeOnsen',     url:'https://animeonsen.xyz/',              tag:'sub' },
+  { name:'FireAnime',      url:'https://fireani.me/',                  tag:'sub' },
+  { name:'Enma',           url:'https://www.enma.lol/',                tag:'sub' },
+  { name:'Senshi',         url:'https://senshi.live/',                 tag:'sub' },
+  { name:'yugen',          url:'https://yugen.to/',                    tag:'sub' },
+  { name:'1anime',         url:'https://1ani.me/',                     tag:'sub' },
+  { name:'KickAssAnime',   url:'https://kickassanime.mx/',             tag:'sub' },
+  { name:'Tenshi',         url:'https://tenshi.moe/',                  tag:'sub' },
+  { name:'AnimeSuge',      url:'https://animesuge.to/',                tag:'sub' },
+  { name:'AnimeGlare',     url:'https://animeglare.xyz/',              tag:'sub' },
+  { name:'AnimeVibe',      url:'https://animevibe.to/',                tag:'sub' },
+  { name:'AnimeKami',      url:'https://animekami.to/',                tag:'sub' },
+  { name:'AnimeRam',       url:'https://www.animeram.cc/',             tag:'sub' },
+  { name:'AnimeSilo',      url:'https://animesilo.cc/',                tag:'sub' },
+  { name:'AnimeNoSub',     url:'https://animenosub.to/',               tag:'sub' },
+  { name:'Kiroku',         url:'https://kiroku.my/',                   tag:'sub' },
+  { name:'ReAnime',        url:'https://reanime.to/',                  tag:'sub' },
+  { name:'AnimeXin',       url:'https://animexin.dev/',                tag:'sub' },
+  { name:'AnimeOwl',       url:'https://animeowl.live/',               tag:'sub' },
+  { name:'AnimeHub',       url:'https://animehub.ac/',                 tag:'sub' },
+  { name:'AnimeRealms',    url:'https://www.animerealms.org/',         tag:'sub' },
+  { name:'Lunar',          url:'https://lunaranime.ru/',               tag:'sub' },
+  { name:'JustAnime',      url:'https://justanime.to/',                tag:'sub' },
+  { name:'AniPlay',        url:'https://aniplay.to/',                  tag:'sub' },
+  { name:'AnimeKhor',      url:'https://animekhor.org/',               tag:'sub' },
+  { name:'MyAnime',        url:'https://myanime.live/',                tag:'sub' },
+  { name:'Yomi',           url:'https://yomi.to/',                     tag:'sub' },
+  { name:'AnimeDAO',       url:'https://animedao.to/',                 tag:'sub' },
+  { name:'AnimeHub.io',    url:'https://animehub.io/',                 tag:'sub' },
+  { name:'GenoAnime',      url:'https://genoanime.com/',               tag:'sub' },
+  { name:'AnimeFever',     url:'https://animefever.cc/',               tag:'sub' },
+  { name:'AnimeSaturn',    url:'https://animesaturn.cx/',              tag:'sub' },
+  { name:'Animes.Vision',  url:'https://animes.vision/',               tag:'sub' },
+  { name:'OtakuStream',    url:'https://otakustream.com/',             tag:'sub' },
+  { name:'AniDoor',        url:'https://anidoor.me/',                  tag:'sub' },
+  { name:'Anoboye',        url:'https://anoboye.com/',                 tag:'sub' },
+  { name:'LuciferDonghua', url:'https://luciferdonghua.in/',           tag:'sub' },
+  { name:'KayoAnime',      url:'https://kayoanime.com/',               tag:'sub' },
+  { name:'GogoAnimes',     url:'https://gogoanimes.fi/',               tag:'sub' },
+  { name:'GogoAnime',      url:'https://gogoanime.by/',                tag:'sub' },
+  { name:'9Anime',         url:'https://9anime.pl/',                   tag:'sub' },
+  { name:'AniHQ',          url:'https://anihq.to/',                    tag:'sub' },
+  { name:'CKSub',          url:'https://cksub.org/',                   tag:'sub' },
+  { name:'KissAnime',      url:'https://kissanime.com.ru/',            tag:'sub' },
+  { name:'WCOStream',      url:'https://wcostream.cc/',                tag:'sub' },
+  { name:'AnimeRush',      url:'https://animerush.tv/',                tag:'sub' },
+  { name:'AnimeFreak',     url:'https://animefreak.tv/',               tag:'sub' },
+  { name:'LMAnime',        url:'https://lmanime.com/',                 tag:'sub' },
+  { name:'aniwave.live',   url:'https://aniwave.live/',                tag:'sub' },
+  { name:'AnimeFlix',      url:'https://animeflix.io/',                tag:'sub' },
+  { name:'VoirAnime',      url:'https://voiranime.com/',               tag:'sub' },
+  { name:'BestDubAnime',   url:'https://bestdubbedanime.com/',         tag:'dub' },
+  { name:'DubbedAnime',    url:'https://dubbedanime.net/',             tag:'dub' },
+  { name:'AnimeFLV',       url:'https://animeflv.net/',                tag:'both' },
+  { name:'AnimeLatino',    url:'https://animelatino.net/',             tag:'both' },
+  { name:'JKAnime',        url:'https://jkanime.net/',                 tag:'both' },
+  { name:'KawaiiAnime',    url:'https://kawaii-anime.com/',            tag:'both' },
+  { name:'AnimeLand',      url:'https://w7.animeland.tv/',             tag:'both' },
+  { name:'Crunchyroll',    url:'https://www.crunchyroll.com/',         tag:'official' },
+  { name:'Funimation',     url:'https://www.funimation.com/',          tag:'official' },
+  { name:'HiDive',         url:'https://www.hidive.com/',              tag:'official' },
+  { name:'Bilibili Anime', url:'https://www.bilibili.tv/',             tag:'official' },
+  { name:'Netflix Anime',  url:'https://www.netflix.com/browse/genre/7424', tag:'official' },
+  { name:'MangaDex',       url:'https://mangadex.org/',                tag:'manga' },
+  { name:'MangaPlus',      url:'https://mangaplus.shueisha.co.jp/',    tag:'manga' },
+  { name:'MangaReader',    url:'https://mangareader.to/',              tag:'manga' },
+  { name:'MangaFire',      url:'https://mangafire.to/',                tag:'manga' },
+  { name:'Bato.to',        url:'https://bato.to/',                     tag:'manga' },
+];
+
+const CATS = [
+  { id:'all',      label:'All'      },
+  { id:'top',      label:'⭐ Top'   },
+  { id:'sub',      label:'Sub'      },
+  { id:'dub',      label:'Dub'      },
+  { id:'both',     label:'Sub+Dub'  },
+  { id:'official', label:'Official' },
+  { id:'manga',    label:'Manga'    },
+];
+
+const TAG_CLASS = { sub:'tag-sub', dub:'tag-dub', both:'tag-both', official:'tag-official', manga:'tag-manga' };
+
+let curCat     = 'all';
+let curSearch  = '';
+let curIdx     = -1;
+let panelOpen  = true;
+let showHidden = false;
+
+const hidden = new Set(JSON.parse(localStorage.getItem('lumis_browse_hidden') || '[]'));
+function saveHidden() { localStorage.setItem('lumis_browse_hidden', JSON.stringify([...hidden])); }
+
+function hideSite(name) {
+  hidden.add(name); saveHidden(); renderList();
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `${name} hidden &nbsp;<span style="color:var(--gold);cursor:pointer;font-weight:700" id="undoBtn">Undo</span>`;
+  document.body.appendChild(t);
+  const undo = t.querySelector('#undoBtn');
+  const timer = setTimeout(() => t.remove(), 4000);
+  undo.addEventListener('click', () => { clearTimeout(timer); t.remove(); hidden.delete(name); saveHidden(); renderList(); });
+}
+function restoreSite(name)  { hidden.delete(name); saveHidden(); renderList(); }
+function restoreAll()       { hidden.clear(); saveHidden(); showHidden = false; renderList(); }
+function toggleShowHidden() {
+  showHidden = !showHidden;
+  document.getElementById('hiddenCount').classList.toggle('active', showHidden);
+  renderList();
+}
+function updateHiddenBar() {
+  const bar = document.getElementById('hiddenBar');
+  const count = document.getElementById('hiddenCount');
+  if (hidden.size === 0) { bar.style.display = 'none'; showHidden = false; }
+  else { bar.style.display = 'flex'; count.textContent = `${showHidden?'▾':'▸'} Hidden (${hidden.size})`; count.classList.toggle('active', showHidden); }
+}
+
+const frame       = document.getElementById('frame');
+const siteList    = document.getElementById('siteList');
+const siteCount   = document.getElementById('siteCount');
+const siteSearch  = document.getElementById('siteSearch');
+const topSiteName = document.getElementById('topSiteName');
+const frameEmpty  = document.getElementById('frameEmpty');
+
+// Category pills
+const catRow = document.getElementById('catRow');
+CATS.forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'cat-pill' + (c.id === curCat ? ' active' : '');
+  btn.textContent = c.label;
+  btn.onclick = () => {
+    curCat = c.id;
+    document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  };
+  catRow.appendChild(btn);
+});
+
+siteSearch.addEventListener('input', e => { curSearch = e.target.value.trim().toLowerCase(); renderList(); });
+
+function renderList() {
+  let items = SITES.map((s, i) => ({ ...s, idx: i }));
+  if (curCat === 'top')      items = items.filter(s => s.top);
+  else if (curCat !== 'all') items = items.filter(s => s.tag === curCat);
+  if (curSearch)             items = items.filter(s => s.name.toLowerCase().includes(curSearch));
+
+  const visible     = items.filter(s => !hidden.has(s.name));
+  const hiddenItems = items.filter(s =>  hidden.has(s.name));
+  const display     = showHidden ? hiddenItems : visible;
+
+  siteCount.textContent = `${visible.length} site${visible.length !== 1 ? 's' : ''}`;
+  updateHiddenBar();
+
+  if (!display.length) {
+    siteList.innerHTML = `<div class="no-sites">${showHidden ? 'No hidden sites here' : 'No sites found'}</div>`;
+    return;
+  }
+
+  siteList.innerHTML = '';
+  display.forEach(s => {
+    const isHidden = hidden.has(s.name);
+    const card = document.createElement('div');
+    card.className = `site-card${s.idx === curIdx ? ' active' : ''}${isHidden ? ' is-hidden' : ''}`;
+    card.dataset.idx = s.idx;
+    const host = new URL(s.url).hostname;
+    card.innerHTML = `
+      <div class="site-favicon">
+        <img src="https://www.google.com/s2/favicons?sz=32&domain=${host}" alt="" onerror="this.parentNode.textContent='${s.name[0]}'">
+      </div>
+      <div class="site-info"><div class="site-name">${s.name}</div></div>
+      <span class="site-tag ${TAG_CLASS[s.tag] || 'tag-sub'}">${s.tag}</span>
+      ${isHidden
+        ? `<button class="site-restore" data-name="${s.name}">↺</button>`
+        : `<button class="site-remove"  data-name="${s.name}">✕</button>`}`;
+    siteList.appendChild(card);
+  });
+}
+
+siteList.addEventListener('click', e => {
+  const rmBtn  = e.target.closest('.site-remove');
+  const rsBtn  = e.target.closest('.site-restore');
+  const card   = e.target.closest('.site-card');
+  if (rmBtn)  { hideSite(rmBtn.dataset.name); return; }
+  if (rsBtn)  { restoreSite(rsBtn.dataset.name); return; }
+  if (card && !card.classList.contains('is-hidden')) loadSite(parseInt(card.dataset.idx));
+});
+
+function loadSite(idx) {
+  curIdx = idx;
+  const s = SITES[idx];
+  frame.src = s.url;
+  frame.style.display = 'block';
+  frameEmpty.style.display = 'none';
+  topSiteName.textContent = s.name;
+  document.title = `${s.name} — LUMIS`;
+  document.querySelectorAll('.site-card').forEach(c => c.classList.toggle('active', parseInt(c.dataset.idx) === idx));
+}
+
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('sidePanel').classList.toggle('collapsed', !panelOpen);
+  document.getElementById('toggleBtn').classList.toggle('active', panelOpen);
+}
+
+// Deep link support
+const searchQ = new URLSearchParams(location.search).get('q');
+if (searchQ) {
+  frame.src = `https://hianime.to/search?keyword=${encodeURIComponent(searchQ)}`;
+  frameEmpty.style.display = 'none';
+  topSiteName.textContent = `HiAnime — "${searchQ}"`;
+  curIdx = 0;
+}
+
+// Fetch live site list from AnimeDB
+fetch('https://ccguvycu.github.io/animedb-site/api/sites.json')
+  .then(r => r.json())
+  .then(data => { if (data.sites?.length) SITES = data.sites; renderList(); })
+  .catch(() => {})
+  .finally(() => { renderList(); });
+</script>
+</body>
+</html>
